@@ -28,7 +28,7 @@ function App() {
           <Routes>
             <Route path="/add" element={<AddFood />} />
             <Route path="/list" element={<h1>List Page</h1>} />
-            <Route path="/order" element={<h1>Orders Page</h1>} />
+            <Route path="/" element={<h1>Orders Page</h1>} />
           </Routes>
         </Box>
       </Box>

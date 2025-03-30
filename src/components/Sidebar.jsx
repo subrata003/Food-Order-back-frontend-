@@ -47,7 +47,7 @@ const Sidebar = () => {
     </NavLink>
 
     {/* Orders */}
-    <NavLink to="/order" style={{ textDecoration: "none", color: "inherit" }}>
+    <NavLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
      <ListItemButton sx={{ "&:hover": { backgroundColor: "#333" } }}>
       <ListItemIcon>
        <ShoppingCartIcon sx={{ color: "#fff" }} />
