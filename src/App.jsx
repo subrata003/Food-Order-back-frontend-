@@ -7,6 +7,7 @@ import AddFood from './pages/AddFood'
 import { Route, Routes } from "react-router-dom"
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import Dashbord from './pages/Dashbord';
 
 function App() {
 
@@ -26,9 +27,10 @@ function App() {
         {/* Main Content */}
         <Box sx={{ flexGrow: 1, padding: 3 }}>
           <Routes>
+          <Route path='/' element={<Dashbord/>}/>
             <Route path="/add" element={<AddFood />} />
             <Route path="/list" element={<h1>List Page</h1>} />
-            <Route path="/" element={<h1>Orders Page</h1>} />
+            <Route path="/orders" element={<h1>Orders Page</h1>} />
           </Routes>
         </Box>
       </Box>

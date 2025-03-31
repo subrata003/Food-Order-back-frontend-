@@ -1,5 +1,6 @@
 import React from "react";
 import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box } from "@mui/material";
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 import { NavLink } from "react-router-dom";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import ListIcon from "@mui/icons-material/List";
@@ -26,6 +27,15 @@ const Sidebar = () => {
     </Box>
    </NavLink>
    <List>
+
+   <NavLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+     <ListItemButton sx={{ "&:hover": { backgroundColor: "#333" } }}>
+      <ListItemIcon>
+       <AnalyticsIcon sx={{ color: "#fff" }} />
+      </ListItemIcon>
+      <ListItemText primary="Dashbord" />
+     </ListItemButton>
+    </NavLink>
     {/* Add Items */}
     <NavLink to="/add" style={{ textDecoration: "none", color: "inherit" }}>
      <ListItemButton sx={{ "&:hover": { backgroundColor: "#333" } }}>
@@ -47,7 +57,7 @@ const Sidebar = () => {
     </NavLink>
 
     {/* Orders */}
-    <NavLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+    <NavLink to="/orders" style={{ textDecoration: "none", color: "inherit" }}>
      <ListItemButton sx={{ "&:hover": { backgroundColor: "#333" } }}>
       <ListItemIcon>
        <ShoppingCartIcon sx={{ color: "#fff" }} />
