@@ -13,16 +13,34 @@ import {
   CardContent,
   Box,
 } from "@mui/material";
+import { addFood } from "../apis/food/addFood";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useFood } from "../storeContext/ContextApi";
+
 
 const categories = [
   "Salad", "Rolls", "Deserts", "Sandwich", "Cake",
   "Pure Veg", "Pasta", "Momo"
 ];
 
-const AddFood = () => {
+const AddFood = ({handleViewAll}) => {
   const [image, setImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  // console.log("img is ",image);
+  const [imageFile, setImageFile] = useState(false);
+    const { fetchFoods } = useFood();
+  
+  const notify = () => {
+    toast.success("Product added successfully!", {
+      position: "top-right", // Adjust position
+      autoClose: 2000, // Auto-close after 3 sec
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    });
+  };
+  // console.log("img is ",imageFile.name);
 
 
   const formik = useFormik({
@@ -41,24 +59,42 @@ const AddFood = () => {
         .positive("Price must be positive")
         .required("Price is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values,{resetForm}) => {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("description", values.description);
       formData.append("category", values.category);
       formData.append("price", values.price);
+    
       if (imageFile) {
-        formData.append("image", imageFile); // Append file to FormData
+        formData.append("image", imageFile); // ✅ Append actual file
       }
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);  // Display key-value pairs
-      }
+    
+      // Debugging: Log FormData key-value pairs
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ": ", pair[1]);  // Display key-value pairs
+      // }
+    
+      try {
+        const res = await addFood(formData);
+        if (res.success == true) {
+         
+          fetchFoods();
+          notify();
+          resetForm();
+          setImageFile(false)
 
+        }
+      } catch (error) {
+        console.error("Error adding food:", error);
+      }
     },
   });
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    console.log("file name is :",file);
+    
     if (file) {
       setImage(URL.createObjectURL(file)); // Preview URL
       setImageFile(file); // Store the actual file
@@ -198,9 +234,11 @@ const AddFood = () => {
               size="large"
               fullWidth
               sx={{ mt: 2, fontWeight: "bold" }}
+             
             >
               Add Product
             </Button>
+            <ToastContainer/>
           </form>
         </CardContent>
       </Card>

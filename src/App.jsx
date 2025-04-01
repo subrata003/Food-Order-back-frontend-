@@ -8,19 +8,22 @@ import AddFood from './components/AddFood'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Dashbord from './pages/Dashbord';
+import { FoodProvider } from './storeContext/ContextApi';
 
 function App() {
 
 
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
-      <CssBaseline /> 
+    <FoodProvider>
+      <Box sx={{ display: "flex", height: "100vh" }}>
+        <CssBaseline />
 
-      {/* Sidebar - Fixed Width */}
-      <Sidebar />
+        {/* Sidebar - Fixed Width */}
+        <Sidebar />
 
-      
-    </Box>
+
+      </Box>
+    </FoodProvider>
   )
 }
 

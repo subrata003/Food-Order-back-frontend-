@@ -5,6 +5,8 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import AddFood from '../components/AddFood';
 import ViewFoods from '../components/ViewFoods';
+import { getAllFood } from '../apis/food/addFood';
+import { useFood } from '../storeContext/ContextApi';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,10 +39,16 @@ function a11yProps(index) {
 
 export default function ManuManagement() {
   const [value, setValue] = React.useState(0);
+  // const[viewFoods,setViewFoods]=React.useState([]);
+  const { fetchFoods } = useFood();
 
-  const handleChange = (event, newValue) => {
+  const handleChange = async (event, newValue) => {
     setValue(newValue);
+    if (newValue === 1) {
+      await fetchFoods();
+    }
   };
+
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -55,11 +63,9 @@ export default function ManuManagement() {
         <AddFood/>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ViewFoods/>
+        <ViewFoods />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
-      </CustomTabPanel>
+     
     </Box>
   );
 }
