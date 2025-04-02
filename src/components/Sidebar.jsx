@@ -160,7 +160,7 @@ export default function Sideabr() {
      >
       <MenuIcon />
      </IconButton>
-     <Typography variant="h6" noWrap component="div">
+     <Typography variant="h5" noWrap component="div">
      Admin Panel
      </Typography>
     </Toolbar>

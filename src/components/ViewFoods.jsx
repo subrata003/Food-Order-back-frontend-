@@ -100,12 +100,12 @@ const View = () => {
           centered
           sx={{ mb: 3 }}
         >
-          <Tab label="Table View" />
           <Tab label="Card View" />
+          <Tab label="Table View" />
         </Tabs>
 
         {/* Table View */}
-        {tabValue === 0 && (
+        {tabValue === 1 && (
           <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
             <Table>
               <TableHead>
@@ -153,7 +153,7 @@ const View = () => {
         )}
 
         {/* Card View */}
-        {tabValue === 1 && (
+        {tabValue === 0 && (
           <Grid container spacing={3}>
             {filteredItems.length > 0 ? (
               filteredItems.map((item) => (
