@@ -1,14 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { Box, CssBaseline, Divider } from "@mui/material";
-import AddFood from './components/AddFood'
-
-import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
-import Dashbord from './pages/Dashbord';
 import { FoodProvider } from './storeContext/ContextApi';
+import { Routes, Route } from "react-router-dom";
+import LogIn from './pages/LogIn';
+import SidebarRoutes from './routes/SidebarRoutes';
+// import LogIn from './pages/LogIn';
 
 function App() {
 
@@ -17,10 +14,12 @@ function App() {
     <FoodProvider>
       <Box sx={{ display: "flex", height: "100vh" }}>
         <CssBaseline />
-
-        {/* Sidebar - Fixed Width */}
-        <Sidebar />
-
+        <Routes>
+          <Route path="/" element={<LogIn />} />
+          <Route path="/sidebar" element={<Sidebar />}>
+            <Route path="*" element={<SidebarRoutes />} /> {/* ✅ Fix route */}
+          </Route>
+        </Routes>
 
       </Box>
     </FoodProvider>
