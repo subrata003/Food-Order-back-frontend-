@@ -39,7 +39,7 @@ import { useFood } from "../storeContext/ContextApi";
 
 const View = () => {
   const url = "http://localhost:8080";
-  const { foodList, removeFood ,fetchFoods} = useFood();
+  const { foodList, removeFood ,fetchFoods,userData} = useFood();
   console.log("foodlist",foodList);
   
 
@@ -114,7 +114,7 @@ const View = () => {
                   <TableCell><strong>Food Name</strong></TableCell>
                   <TableCell><strong>Category</strong></TableCell>
                   <TableCell><strong>Price (₹)</strong></TableCell>
-                  <TableCell><strong>Action</strong></TableCell>
+                  {userData.role == "admin" ||userData.role=="manager" ?<TableCell><strong>Action</strong></TableCell>:" "}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -133,11 +133,11 @@ const View = () => {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.category}</TableCell>
                       <TableCell>₹{item.price}</TableCell>
-                      <TableCell>
+                      {userData.role == "admin" ||userData.role=="manager" ? <TableCell>
                         <IconButton color="error" onClick={() => handleDelete(item)}>
                           <DeleteIcon />
                         </IconButton>
-                      </TableCell>
+                      </TableCell>:''}
                     </TableRow>
                   ))
                 ) : (
@@ -188,7 +188,7 @@ const View = () => {
                       </Typography>
                     </CardContent>
 
-                    <CardActions>
+                    {userData.role == "admin" ||userData.role=="manager" ? <CardActions>
                       <Button
                         variant="contained"
                         color="error"
@@ -198,7 +198,7 @@ const View = () => {
                       >
                         Delete
                       </Button>
-                    </CardActions>
+                    </CardActions>:" "}
                   </Card>
                 </Grid>
 

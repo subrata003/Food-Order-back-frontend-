@@ -22,7 +22,7 @@ import { useFood } from "../storeContext/ContextApi";
 const categories = [
   "Salad", "Rolls", "Deserts", "Sandwich", "Cake",
   "Pure Veg", "Pasta", "Momo"
-];
+];  
 
 const AddFood = ({handleViewAll}) => {
   const [image, setImage] = useState(null);

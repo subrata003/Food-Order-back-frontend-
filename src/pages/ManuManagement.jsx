@@ -49,7 +49,7 @@ export default function ManuManagement() {
   // Define Tabs Based on Role
   const tabs = [{ label: "View Manu", component: <ViewFoods /> }];
   
-  if (userData.role == "admin") {
+  if (userData.role == "admin" || userData.role == "manager") {
     tabs.unshift({ label: "Add Manu", component: <AddFood /> });
   }
 
