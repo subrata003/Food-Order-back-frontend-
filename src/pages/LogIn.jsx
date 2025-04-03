@@ -2,32 +2,53 @@ import React from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { userDetails } from "../apis/user/user";
+import {  userDetails } from "../apis/user/user";
 import { useNavigate } from "react-router-dom";
+import { useFood } from "../storeContext/ContextApi";
 
 const LogIn = () => {
- const navigate= useNavigate();
-  const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-  });
+ const {fetchProfile}=useFood();
+ const navigate = useNavigate();
+ const validationSchema = Yup.object({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+ });
 
-  return (
-    <Container maxWidth="sm">
-      <Box sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 2, textAlign: "center" }}>
-        <Typography variant="h5" gutterBottom>Login</Typography>
+ return (
+  <Container
+      maxWidth="xs"
+      sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          p: 4,
+          boxShadow: 3,
+          borderRadius: 3,
+          textAlign: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" gutterBottom color="primary">
+          Login
+        </Typography>
+
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
-          onSubmit={async(values, { setSubmitting }) => {
+          onSubmit={async (values, { setSubmitting }) => {
             console.log("Login Data:", values);
-            const res=await userDetails(values)
-            if(res.success===true){
-              navigate("/sidebar/dashbord")
-              console.log("Login Response:", res);
-              setSubmitting(false);
+            const res = await userDetails(values);
+            if (res.success === true) {
+              navigate("/sidebar/dashbord");
+              window.location.reload();
             }
-            
+            setSubmitting(false);
           }}
         >
           {({ errors, touched, handleChange, handleBlur, values }) => (
@@ -45,7 +66,7 @@ const LogIn = () => {
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
               />
-              
+
               <Field
                 as={TextField}
                 fullWidth
@@ -60,8 +81,8 @@ const LogIn = () => {
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
               />
-              
-              <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+
+              <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3, py: 1.5 }}>
                 Login
               </Button>
             </Form>
@@ -69,7 +90,7 @@ const LogIn = () => {
         </Formik>
       </Box>
     </Container>
-  );
+ );
 };
 
 export default LogIn;

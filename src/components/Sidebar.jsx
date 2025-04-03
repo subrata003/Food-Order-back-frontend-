@@ -22,6 +22,8 @@ import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { useNavigate } from "react-router-dom";
 import SidebarRoutes from "../routes/SidebarRoutes";
+import { useFood } from "../storeContext/ContextApi";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
@@ -35,6 +37,7 @@ const openedMixin = (theme) => ({
 });
 
 const closedMixin = (theme) => ({
+
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -86,6 +89,7 @@ export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { fetchProfile } = useFood();
 
   const handleSidebar = (index) => {
     switch (index) {
@@ -102,6 +106,11 @@ export default function Sidebar() {
         break;
     }
   };
+  const logout = () => {
+    localStorage.removeItem("token");
+
+    navigate("/");
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -119,8 +128,11 @@ export default function Sidebar() {
           <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 5, ...(open && { display: "none" }) }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h5" noWrap component="div">
-            Admin Panel
+          <Typography sx={{display:"flex",justifyContent:"space-between",alignItems:"center",width:"100%"}}>
+            <Typography variant="h5" noWrap component="div">
+              Admin Panel
+            </Typography>
+            <Typography onClick={logout} sx={{cursor:"pointer"}}> <LogoutIcon/></Typography>
           </Typography>
         </Toolbar>
       </AppBar>

@@ -1,12 +1,11 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import AddFood from '../components/AddFood';
-import ViewFoods from '../components/ViewFoods';
-import { getAllFood } from '../apis/food/addFood';
-import { useFood } from '../storeContext/ContextApi';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import AddFood from "../components/AddFood";
+import ViewFoods from "../components/ViewFoods";
+import { useFood } from "../storeContext/ContextApi";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -30,42 +29,54 @@ CustomTabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
+// Accessibility Props Function
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
 export default function ManuManagement() {
   const [value, setValue] = React.useState(0);
-  // const[viewFoods,setViewFoods]=React.useState([]);
-  const { fetchFoods } = useFood();
+  const { fetchFoods, userData ,fetchProfile} = useFood();
 
+  // fetchProfile();
+  
+  // Ensure userData is available before proceeding
+  if (!userData) return <p>Loading...</p>;
+
+  // Define Tabs Based on Role
+  const tabs = [{ label: "View Manu", component: <ViewFoods /> }];
+  
+  if (userData.role == "admin") {
+    tabs.unshift({ label: "Add Manu", component: <AddFood /> });
+  }
+
+  // Handle Tab Change
   const handleChange = async (event, newValue) => {
     setValue(newValue);
-    if (newValue === 1) {
+    if (tabs[newValue].label === "View Manu") {
       await fetchFoods();
     }
   };
 
-
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Add Manu" {...a11yProps(0)} />
-          <Tab label="View Manu" {...a11yProps(1)} />
-          {/* <Tab label="" {...a11yProps(2)} /> */}
+          {tabs.map((tab, index) => (
+            <Tab key={index} label={tab.label} {...a11yProps(index)} />
+          ))}
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <AddFood/>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <ViewFoods />
-      </CustomTabPanel>
-     
+
+      {/* Render Tab Panels */}
+      {tabs.map((tab, index) => (
+        <CustomTabPanel key={index} value={value} index={index}>
+          {tab.component}
+        </CustomTabPanel>
+      ))}
     </Box>
   );
 }

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getAllFood, deleteFood } from "../apis/food/addFood"; // Import API functions
+import { getUserProfile } from "../apis/user/user";
 
 const FoodContext = createContext();
 
@@ -8,9 +9,12 @@ export const useFood = () => useContext(FoodContext);
 export const FoodProvider = ({ children }) => {
   const [foodList, setFoodList] = useState([]);
   const [loading, setLoading] = useState(false);
+     const [userData, setUserData] = useState(null);
+      console.log("login  User data is ",userData);
 
   // Fetch food items on component mount
   useEffect(() => {
+    fetchProfile();
    fetchFoods();
  },[]);
 
@@ -41,11 +45,24 @@ export const FoodProvider = ({ children }) => {
       console.error("Error deleting food:", error);
     }
   };
+ 
+    const fetchProfile = async () => {
+      const data = await getUserProfile();
+      console.log("user daata is :",data.data);
+      
+      if (data.success) {
+        setUserData(data.data);
+      } else {
+        console.log("Failed to fetch profile:", data.message);
+      }
+    };
+
+ 
 
   
 
   return (
-    <FoodContext.Provider value={{ foodList, removeFood,fetchFoods, loading }}>
+    <FoodContext.Provider value={{ foodList, removeFood,fetchFoods, loading,userData,fetchProfile }}>
       {children}
     </FoodContext.Provider>
   );

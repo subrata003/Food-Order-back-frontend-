@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAuthHeaders } from "../user/user";
 
 const url = "http://localhost:8080";
 
@@ -21,9 +22,11 @@ export const getAllFood = async () => {
  const backendurl = `${url}/api/food/getfood`
 
  const asd = await axios.get(backendurl, {
-  headers: {
+  headers:{
+   ...getAuthHeaders(), 
    "Content-Type": "multipart/form-data",
   }
+  
  },);
  // console.log("asd data is ", asd.data.data);
  

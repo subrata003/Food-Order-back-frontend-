@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import { useFood } from "../storeContext/ContextApi";
+
 
 const socket = io("http://localhost:8080"); // Backend URL
 
 const Dashbord= () => {
     const [notifications, setNotifications] = useState([]);
     const [blink, setBlink] = useState(false);
+    // const {userData}=useFood();
+    // console.log("this is login details :",userData);
+    
+ 
+    
 
     useEffect(() => {
         // Fetch existing notifications
@@ -34,8 +41,10 @@ const Dashbord= () => {
         await axios.put("http://localhost:8080/notifications/read");
         setNotifications([]);
     };
-
+    ///user profile
+    
     return (
+      <>
         <div>
             <h3>📢 Admin Notifications</h3>
             <button 
@@ -56,6 +65,9 @@ const Dashbord= () => {
                 ))
             )}
         </div>
+
+
+        </>
     );
 };
 
