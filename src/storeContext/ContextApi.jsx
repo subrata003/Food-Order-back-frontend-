@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getAllFood, deleteFood } from "../apis/food/addFood"; // Import API functions
 import { getUserProfile } from "../apis/user/user";
+import { getAllOrder } from "../apis/order/order";
 
 const FoodContext = createContext();
 
@@ -8,15 +9,17 @@ export const useFood = () => useContext(FoodContext);
 
 export const FoodProvider = ({ children }) => {
   const [foodList, setFoodList] = useState([]);
+  const[orderList,setOrderList]=useState([]);
   const [loading, setLoading] = useState(false);
      const [userData, setUserData] = useState(null);
-      console.log("login  User data is ",userData);
+      // console.log("login  User data is ",userData);
 
   // Fetch food items on component mount
   useEffect(() => {
+    fetchAllOrders();
     fetchProfile();
    fetchFoods();
- },[]);
+ }, []);
 
   // Fetch all food items
   const fetchFoods = async () => {
@@ -56,13 +59,23 @@ export const FoodProvider = ({ children }) => {
         console.log("Failed to fetch profile:", data.message);
       }
     };
+    const fetchAllOrders=async()=>{
+      const data = await getAllOrder();
+      console.log("orderdata is:",data.data);
+
+      if (data.success) {
+        setOrderList(data.data);
+      } else {
+        console.log("Failed to fetch orders:", data.message);
+      }
+    }
 
  
 
   
 
   return (
-    <FoodContext.Provider value={{ foodList, removeFood,fetchFoods, loading,userData,fetchProfile }}>
+    <FoodContext.Provider value={{ foodList, removeFood,fetchFoods, loading,userData,fetchProfile ,orderList,fetchAllOrders}}>
       {children}
     </FoodContext.Provider>
   );

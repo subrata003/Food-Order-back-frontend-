@@ -26,6 +26,7 @@ import SidebarRoutes from "../routes/SidebarRoutes";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Avatar, Button, Modal, Paper } from "@mui/material";
 import { useFood } from "../storeContext/ContextApi";
+import Profile from "../pages/Profile";
 
 const drawerWidth = 240;
 
@@ -93,7 +94,7 @@ export default function Sidebar() {
   const [openModal, setOpenModal] = useState(false)
   const navigate = useNavigate();
   const { userData } = useFood();
-  console.log("userdata is si sis :",userData);
+  // console.log("userdata is si sis :",userData);
   
 
   const handleSidebar = (index) => {
@@ -167,41 +168,7 @@ export default function Sidebar() {
         <DrawerHeader />
         <SidebarRoutes /> {/* ✅ Renders nested routes correctly */}
       </Box>
-      <Modal open={openModal} onClose={() => setOpenModal(false)} aria-labelledby="modal-title">
-        <Box sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2
-        }}>
-          <Paper elevation={3} sx={{ padding: 2, display: "flex", alignItems: "center", maxWidth: 350 }}>
-            <Avatar sx={{ bgcolor: "primary.main", marginRight: 2 }}>
-              {userData.name.charAt(0).toUpperCase()}
-            </Avatar>
-            <Box>
-              <Typography variant="h6" fontWeight="bold">
-                {userData.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {userData.email}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ fontStyle: "italic" }}>
-                {userData.role}
-              </Typography>
-            </Box>
-          </Paper>
-          {/* <Box sx={{ mt: 3, textAlign: "right" }}>
-            <Button onClick={() => setOpenModal(false)} variant="contained" color="primary">
-              Close
-            </Button>
-          </Box> */}
-        </Box>
-      </Modal>
+      <Profile openModal={openModal} setOpenModal={setOpenModal}  />
     </Box>
   );
 }

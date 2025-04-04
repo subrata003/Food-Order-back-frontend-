@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
  Box,
  Grid,
@@ -25,27 +25,40 @@ import { Formik, Form, FieldArray } from "formik";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import dayjs from "dayjs";
+import { useFood } from "../storeContext/ContextApi";
+import { format } from 'date-fns';
 
-const initialOrders = [
- {
-  id: "1",
-  userName: "Ratan",
-  phoneNo: "1234267384",
-  items: [
-   { name: "Motan", price: 121, quantity: 2 },
-   { name: "Moton", price: 111, quantity: 3 },
-  ],
-  totalAmount: "500",
-  status: "Pending",
-  createdAt: new Date(),
- },
-];
+// const initialOrders = [
+//  {
+//   id: "1",
+//   userName: "Ratan",
+//   phoneNo: "1234267384",
+//   items: [
+//    { name: "Motan", price: 121, quantity: 2 },
+//    { name: "Moton", price: 111, quantity: 3 },
+//   ],
+//   totalAmount: "500",
+//   status: "Pending",
+//   createdAt: new Date(),
+//  },
+// ];
 
 const OrderList = () => {
- const [orders, setOrders] = useState(initialOrders);
+ const{orderList,fetchAllOrders}=useFood();
+ const [orders, setOrders] = useState(orderList);
  const [selectedOrder, setSelectedOrder] = useState(null);
  const [openModal, setOpenModal] = useState(false);
  const [historyFilter, setHistoryFilter] = useState("Today");
+
+
+
+ console.log("order list is is is :",orderList);
+ 
+ useEffect(() => {
+  fetchAllOrders();
+  setOrders(orderList);
+ },[orderList])
+ 
 
  const handleEdit = (order) => {
   setSelectedOrder(order);
@@ -70,6 +83,8 @@ const OrderList = () => {
   if (historyFilter === "This Month") return orderDate.isSame(today, "month");
   return true;
  });
+
+ 
  /////////
 
  return (
@@ -86,12 +101,14 @@ const OrderList = () => {
          <TableCell sx={{ color: "white" }}>Items</TableCell>
          <TableCell sx={{ color: "white" }}>Total (₹)</TableCell>
          <TableCell sx={{ color: "white" }}>Status</TableCell>
+         <TableCell sx={{ color: "white" }}>Date</TableCell>
+
          <TableCell sx={{ color: "white" }}>Action</TableCell>
         </TableRow>
        </TableHead>
        <TableBody>
         {orders.map((order) => (
-         <TableRow key={order.id}>
+         <TableRow key={order.orderId}>
           <TableCell>{order.userName}</TableCell>
           <TableCell>{order.phoneNo}</TableCell>
           <TableCell>
@@ -100,6 +117,8 @@ const OrderList = () => {
 
           <TableCell>₹{order.totalAmount}</TableCell>
           <TableCell>{order.status}</TableCell>
+          <TableCell>{format(new Date(order.createdAt), ' hh:mm a dd/MM/yy ')}</TableCell>
+
           <TableCell>
            <Button variant="contained" onClick={() => handleEdit(order)}>
             Edit
@@ -115,9 +134,9 @@ const OrderList = () => {
     <Grid item xs={12} md={4}>
      <Typography variant="h6" textAlign="center" mb={2}>Order History</Typography>
      <Tabs value={historyFilter} onChange={(e, newValue) => setHistoryFilter(newValue)} centered>
-      <Tab label="Today" value="Today" />
-      <Tab label="This Week" value="This Week" />
-      <Tab label="This Month" value="This Month" />
+     <Tab label={`Today(${filteredOrders.length})`} value="Today" />
+      <Tab label={`This Week (${filteredOrders.length})`} value="This Week" />
+      <Tab label={`This Month (${filteredOrders.length})`} value="This Month"/>
      </Tabs>
      {filteredOrders.map((order) => (
       <Card key={order.id} sx={{ mt: 2 }}>
