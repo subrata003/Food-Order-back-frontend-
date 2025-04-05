@@ -13,7 +13,7 @@ export const getAllOrder = async () => {
   }
   
  },);
- console.log("asd data is ", asd.data);
+ // console.log("asd data is ", asd.data);
  
 
  return asd.data;

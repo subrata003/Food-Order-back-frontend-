@@ -12,10 +12,11 @@ export const FoodProvider = ({ children }) => {
   const[orderList,setOrderList]=useState([]);
   const [loading, setLoading] = useState(false);
      const [userData, setUserData] = useState(null);
-      // console.log("login  User data is ",userData);
 
   // Fetch food items on component mount
   useEffect(() => {
+    // console.log("login  User data is ",orderList);
+
     fetchAllOrders();
     fetchProfile();
    fetchFoods();
@@ -51,7 +52,7 @@ export const FoodProvider = ({ children }) => {
  
     const fetchProfile = async () => {
       const data = await getUserProfile();
-      console.log("user daata is :",data.data);
+      // console.log("user daata is :",data.data);
       
       if (data.success) {
         setUserData(data.data);
@@ -61,7 +62,7 @@ export const FoodProvider = ({ children }) => {
     };
     const fetchAllOrders=async()=>{
       const data = await getAllOrder();
-      console.log("orderdata is:",data.data);
+      // console.log("orderdata is:",data.data);
 
       if (data.success) {
         setOrderList(data.data);
