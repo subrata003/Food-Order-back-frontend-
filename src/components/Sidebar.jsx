@@ -28,6 +28,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Avatar, Button, Modal, Paper } from "@mui/material";
 import { useFood } from "../storeContext/ContextApi";
 import Profile from "../pages/Profile";
+import Notification from "./Notification";
+
 
 const drawerWidth = 240;
 
@@ -143,7 +145,7 @@ export default function Sidebar() {
               Admin Panel
             </Typography>
             <Typography sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
-              <Typography sx={{ cursor: "pointer" }}> <NotificationsNoneOutlinedIcon /></Typography>
+              <Typography sx={{ cursor: "pointer" }}> <Notification /></Typography>
 
               <Typography onClick={logout} sx={{ cursor: "pointer" }}> <LogoutIcon /></Typography>
             </Typography>
@@ -152,7 +154,7 @@ export default function Sidebar() {
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          Hotel Gold
+           <Typography variant="h5">Hotel Gold</Typography> 
           <IconButton onClick={handleDrawerClose}>{theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}</IconButton>
         </DrawerHeader>
         <Divider />

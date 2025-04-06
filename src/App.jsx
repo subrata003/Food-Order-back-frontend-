@@ -5,12 +5,15 @@ import { FoodProvider } from './storeContext/ContextApi';
 import { Routes, Route } from "react-router-dom";
 import LogIn from './pages/LogIn';
 import SidebarRoutes from './routes/SidebarRoutes';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 // import LogIn from './pages/LogIn';
 
 function App() {
 
 
   return (
+    <Provider store={store}>
     <FoodProvider>
       <Box sx={{ display: "flex", height: "100vh" }}>
         <CssBaseline />
@@ -23,6 +26,7 @@ function App() {
 
       </Box>
     </FoodProvider>
+    </Provider>
   )
 }
 

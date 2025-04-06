@@ -22,6 +22,7 @@ import {
   Tabs,
   Tab,
   TablePagination,
+  InputAdornment,
 } from "@mui/material";
 import { Formik, Form, FieldArray } from "formik";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,6 +31,7 @@ import dayjs from "dayjs";
 import { useFood } from "../storeContext/ContextApi";
 import { format, isSameDay, isSameWeek, isSameMonth, compareDesc } from "date-fns";
 import { orderUpdate } from "../apis/order/order";
+import SearchIcon from '@mui/icons-material/Search';
 
 const OrderList = () => {
   const { orderList, fetchAllOrders } = useFood();
@@ -38,11 +40,12 @@ const OrderList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [historyFilter, setHistoryFilter] = useState("Today");
   const [page, setPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState([])
   const rowsPerPage = 6;
 
   useEffect(() => {
     fetchAllOrders();
-  }, []);
+  }, [orderList]);
 
   useEffect(() => {
     const sortedOrders = [...orderList].sort((a, b) =>
@@ -96,19 +99,45 @@ const OrderList = () => {
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
+  const filterOrder = orders.filter((item) => {
+    const term = String(searchTerm || "").toLowerCase();
+    return item.orderId?.toString().toLowerCase().includes(term);
+  });
+  ;
+
+
   return (
     <Box sx={{ p: 4, maxWidth: "100%", mx: "auto" }}>
       <Grid container spacing={15}>
         {/* Orders List Section */}
         <Grid item xs={12} md={8}>
-          <Typography variant="h5" textAlign="center" mb={3} fontWeight={600}>
-            Orders List
+          <Typography sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="h5" textAlign="center" mb={3} fontWeight={600}>
+              Orders List
+            </Typography>
+            <Typography variant="h5" textAlign="center" mb={3} fontWeight={600}>
+              <TextField
+                placeholder="Search by orderId"
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{ width: 300, marginBottom: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Typography>
           </Typography>
-          <TableContainer component={Paper} sx={{ boxShadow: 4, borderRadius: 2 }}>
+          <TableContainer component={Paper} sx={{ boxShadow: 4, borderRadius: 2, width: "50vw" }}>
             <Table>
               <TableHead>
                 <TableRow sx={{ bgcolor: "#da1142" }}>
-                  {['User', 'Phone', 'Items', 'Total (₹)', 'Status', 'Date', 'Action'].map((head) => (
+                  {['OrderId', 'User', 'Phone', 'Items', 'Total (₹)', 'Status', 'Date', 'Action'].map((head) => (
                     <TableCell key={head} sx={{ color: "white", fontWeight: "bold" }}>
                       {head}
                     </TableCell>
@@ -116,8 +145,9 @@ const OrderList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order) => (
+                {filterOrder.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order) => (
                   <TableRow key={order._id} hover>
+                    <TableCell>{order.orderId}</TableCell>
                     <TableCell>{order.userName}</TableCell>
                     <TableCell>{order.phoneNo}</TableCell>
                     <TableCell>
@@ -156,32 +186,53 @@ const OrderList = () => {
             variant="fullWidth"
             TabIndicatorProps={{
               style: {
-                backgroundColor:"#da1142",// '#ff9800', // custom underline color
+                backgroundColor: "#da1142",// '#ff9800', // custom underline color
               },
             }}
           >
             <Tab sx={{
               '&.Mui-selected': {
-                color:"#f41f53 ",// '#ff9800', // selected text color
+                color: "#f41f53 ",// '#ff9800', // selected text color
                 fontWeight: 'bold',
               },
             }} label="Today" value="Today" />
             <Tab sx={{
               '&.Mui-selected': {
-                color:"#f41f53 " ,//'#ff9800', // selected text color
+                color: "#f41f53 ",//'#ff9800', // selected text color
                 fontWeight: 'bold',
               },
             }} label="This Week" value="This Week" />
             <Tab sx={{
               '&.Mui-selected': {
-                color:"#f41f53 ", // '#ff9800', // selected text color
+                color: "#f41f53 ", // '#ff9800', // selected text color
                 fontWeight: 'bold',
               },
             }} label="This Month" value="This Month" />
           </Tabs>
-          <Box sx={{ maxHeight: 450, overflowY: "auto", mt: 2 }}>
+          <Box
+            sx={{
+              maxHeight: 450,
+              overflowY: "auto",
+              mt: 2,
+              pr: 1, 
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f0f0f0", 
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#da1142", 
+                borderRadius: "8px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor:"#b70d38", 
+              },
+            }}
+          >
             {filteredOrders.map((order) => (
-              <Card key={order._id} sx={{ mb: 2, boxShadow: 2 }}>
+              <Card key={order._id} sx={{ mb: 2, boxShadow: 2, borderBottom: "2px solid #da1142" }}>
                 <CardContent>
                   <Typography variant="body1" fontWeight={600}>
                     {order.userName} - ₹{order.totalAmount}
@@ -193,6 +244,7 @@ const OrderList = () => {
               </Card>
             ))}
           </Box>
+
         </Grid>
       </Grid>
 
@@ -279,9 +331,10 @@ const OrderList = () => {
                             </Box>
                           ))}
                           <Button
-                            startIcon={<AddCircleIcon />}
+                            startIcon={<AddCircleIcon sx={{ color: "#da1142" }} />}
                             onClick={() => push({ name: "", price: "", quantity: "" })}
                             disabled={isCompleted}
+                            sx={{ color: "#da1142" }}
                           >
                             Add Item
                           </Button>
@@ -302,15 +355,17 @@ const OrderList = () => {
                       <MenuItem value="Completed">Completed</MenuItem>
                       <MenuItem value="canceled">canceled</MenuItem>
                     </Select>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        type="submit"
 
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      fullWidth
-                      disabled={isCompleted || isCanceled}
-                    >
-                      Update Order
-                    </Button>
+                        disabled={isCompleted || isCanceled}
+                        sx={{ background: "#da1142" }}
+                      >
+                        Update Order
+                      </Button>
+                    </Box>
                   </Form>
                 );
               }}

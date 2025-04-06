@@ -39,28 +39,28 @@ import { useFood } from "../storeContext/ContextApi";
 
 const View = () => {
   const url = "http://localhost:8080";
-  const { foodList, removeFood ,fetchFoods,userData} = useFood();
-  console.log("foodlist",foodList);
-  
+  const { foodList, removeFood, fetchFoods, userData } = useFood();
+  console.log("foodlist", foodList);
+
 
   // const [foodList, setFoodItems] = useState(foodList);
   const [tabValue, setTabValue] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [foodId, setFoodId] = useState(null);
-  const[delateItem,setDeleteItem]=useState([])
+  const [delateItem, setDeleteItem] = useState([])
   // Function to delete a food item
   const handleDelete = async (item) => {
     setFoodId(item._id)
     setDeleteItem(item)
     setOpen(true);
-    
+
 
   };
   const handleClose = async () => {
     setOpen(false);
   }
-  const handleDeleteSingleFood= async ()=>{
+  const handleDeleteSingleFood = async () => {
     await removeFood(foodId);
     await fetchFoods();
     handleClose();
@@ -99,9 +99,30 @@ const View = () => {
           onChange={(event, newValue) => setTabValue(newValue)}
           centered
           sx={{ mb: 3 }}
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: "#da1142", 
+            },
+          }}
         >
-          <Tab label="Card View" />
-          <Tab label="Table View" />
+          <Tab
+            label="Card View"
+            sx={{
+              '&.Mui-selected': {
+                color: "#da1142", 
+                fontWeight: "bold",
+              },
+            }}
+          />
+          <Tab
+            label="Table View"
+            sx={{
+              '&.Mui-selected': {
+                color: "#da1142", 
+                fontWeight: "bold",
+              },
+            }}
+          />
         </Tabs>
 
         {/* Table View */}
@@ -114,7 +135,7 @@ const View = () => {
                   <TableCell><strong>Food Name</strong></TableCell>
                   <TableCell><strong>Category</strong></TableCell>
                   <TableCell><strong>Price (₹)</strong></TableCell>
-                  {userData.role == "admin" ||userData.role=="manager" ?<TableCell><strong>Action</strong></TableCell>:" "}
+                  {userData.role == "admin" || userData.role == "manager" ? <TableCell><strong>Action</strong></TableCell> : " "}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -133,11 +154,11 @@ const View = () => {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.category}</TableCell>
                       <TableCell>₹{item.price}</TableCell>
-                      {userData.role == "admin" ||userData.role=="manager" ? <TableCell>
+                      {userData.role == "admin" || userData.role == "manager" ? <TableCell>
                         <IconButton color="error" onClick={() => handleDelete(item)}>
                           <DeleteIcon />
                         </IconButton>
-                      </TableCell>:''}
+                      </TableCell> : ''}
                     </TableRow>
                   ))
                 ) : (
@@ -188,17 +209,17 @@ const View = () => {
                       </Typography>
                     </CardContent>
 
-                    {userData.role == "admin" ||userData.role=="manager" ? <CardActions>
+                    {userData.role == "admin" || userData.role == "manager" ? <CardActions>
                       <Button
                         variant="contained"
                         color="error"
                         startIcon={<DeleteIcon />}
                         sx={{ width: '100%' }}
-                         onClick={() => handleDelete(item)}
+                        onClick={() => handleDelete(item)}
                       >
                         Delete
                       </Button>
-                    </CardActions>:" "}
+                    </CardActions> : " "}
                   </Card>
                 </Grid>
 
@@ -236,7 +257,7 @@ const View = () => {
                   {' '}
                   &quot;{delateItem.name}&quot;{' '}.
                 </Typography>
-               Its details will also be removed from invoice.
+                Its details will also be removed from invoice.
               </Typography>
             </Stack>
 

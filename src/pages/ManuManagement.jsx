@@ -7,6 +7,7 @@ import AddFood from "../components/AddFood";
 import ViewFoods from "../components/ViewFoods";
 import { useFood } from "../storeContext/ContextApi";
 
+// Custom Tab Panel component
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -29,7 +30,7 @@ CustomTabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-// Accessibility Props Function
+// Accessibility props for tabs
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -39,21 +40,16 @@ function a11yProps(index) {
 
 export default function ManuManagement() {
   const [value, setValue] = React.useState(0);
-  const { fetchFoods, userData ,fetchProfile} = useFood();
+  const { fetchFoods, userData } = useFood();
 
-  // fetchProfile();
-  
-  // Ensure userData is available before proceeding
   if (!userData) return <p>Loading...</p>;
 
-  // Define Tabs Based on Role
   const tabs = [{ label: "View Manu", component: <ViewFoods /> }];
-  
-  if (userData.role == "admin" || userData.role == "manager") {
+
+  if (userData.role === "admin" || userData.role === "manager") {
     tabs.unshift({ label: "Add Manu", component: <AddFood /> });
   }
 
-  // Handle Tab Change
   const handleChange = async (event, newValue) => {
     setValue(newValue);
     if (tabs[newValue].label === "View Manu") {
@@ -64,14 +60,32 @@ export default function ManuManagement() {
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="Manu Management Tabs"
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: "#f41f53", // Indicator (underline) color
+            },
+          }}
+        >
           {tabs.map((tab, index) => (
-            <Tab key={index} label={tab.label} {...a11yProps(index)} />
+            <Tab
+              key={index}
+              label={tab.label}
+              {...a11yProps(index)}
+              sx={{
+                "&.Mui-selected": {
+                  color: "#f41f53", // Selected tab text color
+                  fontWeight: "bold",
+                },
+              }}
+            />
           ))}
         </Tabs>
       </Box>
 
-      {/* Render Tab Panels */}
       {tabs.map((tab, index) => (
         <CustomTabPanel key={index} value={value} index={index}>
           {tab.component}
