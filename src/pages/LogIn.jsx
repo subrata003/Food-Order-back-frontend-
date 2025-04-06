@@ -16,17 +16,19 @@ const LogIn = () => {
 
  return (
   <Container
-      maxWidth="xs"
+      maxWidth="100vw"
       sx={{
         height: "100vh",
+        backgroundImage: "linear-gradient(135deg, #a7062d, #ff4b2b)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        
       }}
     >
       <Box
         sx={{
-          width: "100%",
+          width: "30%",
           p: 4,
           boxShadow: 3,
           borderRadius: 3,
@@ -34,7 +36,7 @@ const LogIn = () => {
           backgroundColor: "white",
         }}
       >
-        <Typography variant="h5" fontWeight="bold" gutterBottom color="primary">
+        <Typography variant="h5" fontWeight="bold" gutterBottom color="#a7062d">
           Login
         </Typography>
 
@@ -82,7 +84,7 @@ const LogIn = () => {
                 helperText={touched.password && errors.password}
               />
 
-              <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3, py: 1.5 }}>
+              <Button type="submit" variant="contained"  fullWidth sx={{ mt: 3, py: 1.5,background:"#a7062d" }}>
                 Login
               </Button>
             </Form>

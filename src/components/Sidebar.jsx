@@ -22,6 +22,7 @@ import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { useNavigate } from "react-router-dom";
 import SidebarRoutes from "../routes/SidebarRoutes";
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Avatar, Button, Modal, Paper } from "@mui/material";
@@ -95,7 +96,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const { userData } = useFood();
   // console.log("userdata is si sis :",userData);
-  
+
 
   const handleSidebar = (index) => {
     switch (index) {
@@ -132,7 +133,7 @@ export default function Sidebar() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} sx={{ backgroundColor: "#a7062d" }}>
         <Toolbar>
           <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 5, ...(open && { display: "none" }) }}>
             <MenuIcon />
@@ -141,7 +142,11 @@ export default function Sidebar() {
             <Typography variant="h5" noWrap component="div">
               Admin Panel
             </Typography>
-            <Typography onClick={logout} sx={{ cursor: "pointer" }}> <LogoutIcon /></Typography>
+            <Typography sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
+              <Typography sx={{ cursor: "pointer" }}> <NotificationsNoneOutlinedIcon /></Typography>
+
+              <Typography onClick={logout} sx={{ cursor: "pointer" }}> <LogoutIcon /></Typography>
+            </Typography>
           </Typography>
         </Toolbar>
       </AppBar>
@@ -168,7 +173,7 @@ export default function Sidebar() {
         <DrawerHeader />
         <SidebarRoutes /> {/* ✅ Renders nested routes correctly */}
       </Box>
-      <Profile openModal={openModal} setOpenModal={setOpenModal}  />
+      <Profile openModal={openModal} setOpenModal={setOpenModal} />
     </Box>
   );
 }

@@ -19,3 +19,15 @@ export const getAllOrder = async () => {
  return asd.data;
 
 }
+
+export const orderUpdate = async (id,food) => {
+ console.log("api food id is :",id,food);
+ 
+
+ const backendurl = `${url}/api/food/order/update/${id}`
+
+ const asd = await axios.put(backendurl,food);
+
+ return asd.data;
+
+}
