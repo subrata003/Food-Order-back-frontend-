@@ -32,6 +32,7 @@ import { useFood } from "../storeContext/ContextApi";
 import { format, isSameDay, isSameWeek, isSameMonth, compareDesc } from "date-fns";
 import { orderUpdate } from "../apis/order/order";
 import SearchIcon from '@mui/icons-material/Search';
+import moment from "moment";
 
 const OrderList = () => {
   const { orderList, fetchAllOrders } = useFood();
@@ -238,7 +239,9 @@ const OrderList = () => {
                     {order.userName} - ₹{order.totalAmount}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {dayjs(order.createdAt).format("DD MMM YYYY, hh:mm A")}
+                    {/* {dayjs(order.createdAt).format("DD MMM YYYY, hh:mm A")} */}
+                    {`${moment(order.createdAt).fromNow()} (${moment(order.createdAt).format("DD MMM YYYY")})`}
+
                   </Typography>
                 </CardContent>
               </Card>
