@@ -23,11 +23,16 @@ import {
   DialogContent,
   Stack,
   Avatar,
+  Switch,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import { deleteFood } from "../apis/food/addFood";
+import { deleteFood, updateFood } from "../apis/food/addFood";
 import { useFood } from "../storeContext/ContextApi";
+import { toast, ToastContainer } from "react-toastify";
+
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
+
 
 // const viewFoods = [
 //   { id: 1, name: "Margherita Pizza", category: "Pizza", price: 299 },
@@ -49,6 +54,21 @@ const View = () => {
   const [open, setOpen] = useState(false);
   const [foodId, setFoodId] = useState(null);
   const [delateItem, setDeleteItem] = useState([])
+  const [checked, setChecked] = useState(false);
+  console.log("checked:",checked);
+
+  const notify = (message) => {
+    toast.success(`${message}`, {
+      position: "top-right", // Adjust position
+      autoClose: 2000, // Auto-close after 3 sec
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    });
+  };
+  
   // Function to delete a food item
   const handleDelete = async (item) => {
     setFoodId(item._id)
@@ -70,6 +90,30 @@ const View = () => {
   const filteredItems = foodList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const handleShow=async(e,item)=>{
+    // setChecked(e.target.checked)
+    const ischecekd=e.target.checked
+    const newStatus= !ischecekd? "hide" :"show"
+    const updatedItem = { ...item, status: newStatus };
+    console.log("updatedItem:",updatedItem);
+
+    try {
+      const res=await updateFood(item._id,updatedItem)
+      if (res.success==true) {
+        // console.log(res.message);
+        
+        fetchFoods();
+        notify(res.message);
+        
+      }
+      
+    } catch (error) {
+      
+    }
+    
+    
+
+  }
 
   return (
     <>
@@ -101,7 +145,7 @@ const View = () => {
           sx={{ mb: 3 }}
           TabIndicatorProps={{
             style: {
-              backgroundColor: "#da1142", 
+              backgroundColor: "#da1142",
             },
           }}
         >
@@ -109,7 +153,7 @@ const View = () => {
             label="Card View"
             sx={{
               '&.Mui-selected': {
-                color: "#da1142", 
+                color: "#da1142",
                 fontWeight: "bold",
               },
             }}
@@ -118,7 +162,7 @@ const View = () => {
             label="Table View"
             sx={{
               '&.Mui-selected': {
-                color: "#da1142", 
+                color: "#da1142",
                 fontWeight: "bold",
               },
             }}
@@ -135,6 +179,8 @@ const View = () => {
                   <TableCell><strong>Food Name</strong></TableCell>
                   <TableCell><strong>Category</strong></TableCell>
                   <TableCell><strong>Price (₹)</strong></TableCell>
+                  <TableCell><strong>Quantity</strong></TableCell>
+
                   {userData.role == "admin" || userData.role == "manager" ? <TableCell><strong>Action</strong></TableCell> : " "}
                 </TableRow>
               </TableHead>
@@ -154,6 +200,8 @@ const View = () => {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.category}</TableCell>
                       <TableCell>₹{item.price}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+
                       {userData.role == "admin" || userData.role == "manager" ? <TableCell>
                         <IconButton color="error" onClick={() => handleDelete(item)}>
                           <DeleteIcon />
@@ -199,22 +247,34 @@ const View = () => {
                           No Image Available
                         </Typography>
                       )}
+                      <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
+                        {item.name}
+                      </Typography>
                       <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
-                          {item.name}
-                        </Typography>
                         <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
                           Price: ₹{item.price}
+                        </Typography>
+                        <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
+                          Quantity:{item.quantity}
                         </Typography>
                       </Typography>
                     </CardContent>
 
-                    {userData.role == "admin" || userData.role == "manager" ? <CardActions>
+                    {userData.role == "admin" || userData.role == "manager" ? 
+                    <CardActions sx={{display:"flex", justifyContent:"space-between"}}>
+
+                      <Switch
+                       {...label} 
+                       defaultChecked={item.status === "show"} 
+                       onChange={(e)=>handleShow(e,item)}  
+
+                       />
+
                       <Button
                         variant="contained"
                         color="error"
                         startIcon={<DeleteIcon />}
-                        sx={{ width: '100%' }}
+                        sx={{ width: '40%' }}
                         onClick={() => handleDelete(item)}
                       >
                         Delete
@@ -229,6 +289,8 @@ const View = () => {
                 No food items found.
               </Typography>
             )}
+            <ToastContainer />
+
           </Grid>
 
         )}

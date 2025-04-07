@@ -50,3 +50,17 @@ export const deleteFood = async (id) => {
  return asd.data;
 
 }
+
+export const updateFood = async (id,food) => {
+
+ const backendurl = `${url}/api/food/updatefood/${id}`
+
+ const asd = await axios.put(backendurl, food, {
+  headers: {
+   "Content-Type": "multipart/form-data",
+  }
+ },);
+
+ return asd.data;
+
+}

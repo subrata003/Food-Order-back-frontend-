@@ -62,9 +62,37 @@ function Notification() {
  const id = open ? 'simple-popover' : undefined;
  return (
   <Typography>
-   <Button aria-describedby={id}  onClick={handleClick}>
+   {/* <Button aria-describedby={id}  onClick={handleClick}>
     <NotificationImportantIcon sx={{color:"white"}} />
     {notifications.length}
+   </Button> */}
+   <Button
+    aria-describedby={id}
+    sx={{ color: "white", position: "relative", p: 0 }}
+    onClick={handleClick}
+   >
+    <Box sx={{ position: "relative" }}>
+     <NotificationImportantIcon fontSize="large" />
+     <Typography
+      sx={{
+       position: "absolute",
+       top: -5,
+       right: -5,
+       background: "red",
+       color: "white",
+       borderRadius: "50%",
+       width: "20px",
+       height: "20px",
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       fontSize: "12px",
+       fontWeight: "bold",
+      }}
+     >
+      {notifications.length}
+     </Typography>
+    </Box>
    </Button>
    <Popover
     id={id}

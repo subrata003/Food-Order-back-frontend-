@@ -49,6 +49,7 @@ const AddFood = ({ handleViewAll }) => {
       description: "",
       category: "",
       price: "",
+      quantity:""
 
     },
     validationSchema: Yup.object({
@@ -58,6 +59,9 @@ const AddFood = ({ handleViewAll }) => {
       price: Yup.number()
         .positive("Price must be positive")
         .required("Price is required"),
+      quantity: Yup.number()
+        .positive("quantity must be positive")
+        .required("quantity is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
@@ -65,6 +69,7 @@ const AddFood = ({ handleViewAll }) => {
       formData.append("description", values.description);
       formData.append("category", values.category);
       formData.append("price", values.price);
+      formData.append("quantity", values.quantity);
 
       if (imageFile) {
         formData.append("image", imageFile); // ✅ Append actual file
@@ -226,7 +231,19 @@ const AddFood = ({ handleViewAll }) => {
                   helperText={formik.touched.price && formik.errors.price}
                   fullWidth
                 />
+                <TextField
+                  label="Quantity"
+                  name="quantity"
+                  type="number"
+                  value={formik.values.quantity}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.quantity && Boolean(formik.errors.quantity)}
+                  helperText={formik.touched.quantity && formik.errors.quantity}
+                  fullWidth
+                />
               </Box>
+
 
               {/* Submit Button */}
               <Box sx={{display:"flex",justifyContent:"flex-end"}}>
