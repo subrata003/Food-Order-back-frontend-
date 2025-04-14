@@ -7,6 +7,7 @@ import LogIn from './pages/LogIn';
 import SidebarRoutes from './routes/SidebarRoutes';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+import CreateNewOrder from './components/CreateNewOrder';
 // import LogIn from './pages/LogIn';
 
 function App() {

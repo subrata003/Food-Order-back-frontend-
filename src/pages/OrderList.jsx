@@ -23,6 +23,7 @@ import {
   Tab,
   TablePagination,
   InputAdornment,
+  Chip,
 } from "@mui/material";
 import { Formik, Form, FieldArray } from "formik";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -155,7 +156,14 @@ const OrderList = () => {
                       {order.items.map((item) => `${item.name}${item.quantity > 1 ? ` x${item.quantity}` : ""}`).join(", ")}
                     </TableCell>
                     <TableCell>₹{order.totalAmount}</TableCell>
-                    <TableCell>{order.status}</TableCell>
+
+                    <TableCell><Chip label={order.status} color={
+                      order.status === 'Completed' ? 'success' :
+                        order.status === 'Pending' ? 'warning' :
+                          order.status === 'Processing' ? 'info' :
+                            order.status === 'Cancelled' ? 'error' :
+                              'default'
+                    } /></TableCell>
                     <TableCell>{format(new Date(order.createdAt), 'hh:mm a dd/MM/yy')}</TableCell>
                     <TableCell>
                       <Button onClick={() => handleEdit(order)}> <EditCalendarOutlinedIcon sx={{ color: "#f41f53 " }} /> </Button>
@@ -215,20 +223,20 @@ const OrderList = () => {
               maxHeight: 450,
               overflowY: "auto",
               mt: 2,
-              pr: 1, 
+              pr: 1,
               "&::-webkit-scrollbar": {
                 width: "8px",
               },
               "&::-webkit-scrollbar-track": {
-                backgroundColor: "#f0f0f0", 
+                backgroundColor: "#f0f0f0",
                 borderRadius: "4px",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#da1142", 
+                backgroundColor: "#da1142",
                 borderRadius: "8px",
               },
               "&::-webkit-scrollbar-thumb:hover": {
-                backgroundColor:"#b70d38", 
+                backgroundColor: "#b70d38",
               },
             }}
           >
@@ -236,7 +244,13 @@ const OrderList = () => {
               <Card key={order._id} sx={{ mb: 2, boxShadow: 2, borderBottom: "2px solid #da1142" }}>
                 <CardContent>
                   <Typography variant="body1" fontWeight={600}>
-                    {order.userName} - ₹{order.totalAmount}
+                    {order.userName} - ₹{order.totalAmount} <Chip label={order.status} variant="outlined" color={
+                      order.status === 'Completed' ? 'success' :
+                        order.status === 'Pending' ? 'warning' :
+                          order.status === 'Processing' ? 'info' :
+                            order.status === 'Cancelled' ? 'error' :
+                              'default'
+                    } />
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {/* {dayjs(order.createdAt).format("DD MMM YYYY, hh:mm A")} */}
