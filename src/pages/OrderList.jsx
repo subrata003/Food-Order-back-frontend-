@@ -161,7 +161,7 @@ const OrderList = () => {
                       order.status === 'Completed' ? 'success' :
                         order.status === 'Pending' ? 'warning' :
                           order.status === 'Processing' ? 'info' :
-                            order.status === 'Cancelled' ? 'error' :
+                            order.status === 'canceled' ? 'error' :
                               'default'
                     } /></TableCell>
                     <TableCell>{format(new Date(order.createdAt), 'hh:mm a dd/MM/yy')}</TableCell>
@@ -248,7 +248,7 @@ const OrderList = () => {
                       order.status === 'Completed' ? 'success' :
                         order.status === 'Pending' ? 'warning' :
                           order.status === 'Processing' ? 'info' :
-                            order.status === 'Cancelled' ? 'error' :
+                            order.status === 'canceled' ? 'error' :
                               'default'
                     } />
                   </Typography>

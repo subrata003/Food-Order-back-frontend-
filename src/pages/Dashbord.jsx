@@ -10,7 +10,7 @@ const Dashbord= () => {
   }
  return (
       <>
-        <Button onClick={newOrder}>Add New Order</Button>
+        <Button sx={{margin: "10px"}} variant="contained" color="success" onClick={newOrder}>Add New Order</Button>
         <Outlet />
 
         </>
