@@ -13,11 +13,18 @@ import { getAllFood } from '../apis/food/addFood';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import axios from 'axios';
+import { OrderList } from '../../public/list';
+
 
 function CreateNewOrder() {
  const url = 'http://localhost:8080';
  const [foods, setFoods] = useState([]);
  const [cart, setCart] = useState({});
+
+  const allItem=OrderList.map((item) => {
+   return item
+   
+  })
 
  useEffect(() => {
   const fetchAllFood = async () => {
@@ -95,6 +102,69 @@ function CreateNewOrder() {
 
  return (
   <Box>
+    <Box
+        sx={{
+         display: 'flex',
+         overflowX: 'auto',
+         p: 2,
+         borderRadius: 2,
+         scrollbarWidth: 'none',
+         '&::-webkit-scrollbar': {
+          display: 'none',
+         },
+         marginBottom: '20px',
+        }}
+       >
+        {OrderList.map((item, index) => (
+         <Box
+          key={index}
+          sx={{
+           flex: '0 0 auto',
+           minWidth: '160px', // creates consistent spacing between items
+           textAlign: 'center',
+           cursor: 'pointer',
+           transition: 'transform 0.3s ease',
+           mr: 2, // right margin between cards
+           '&:hover': {
+            transform: 'scale(1.05)',
+           },
+          }}
+          onClick={()=>filterItem(item)}
+         >
+          <Box
+           sx={{
+            width: '150px',
+            height: '150px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '2px solid #ddd',
+            mx: 'auto',
+            mb: 1,
+            backgroundColor: '#fff',
+           }}
+          >
+           <img
+            src={item.img}
+            alt={item.name}
+            style={{
+             width: '100%',
+             height: '100%',
+             objectFit: 'cover',
+            }}
+           />
+          </Box>
+          <Typography
+           variant="body2"
+           fontWeight="500"
+           color="textPrimary"
+           noWrap
+          >
+           {item.name}
+          </Typography>
+         </Box>
+        ))}
+       </Box>
+       <Typography sx={{margin:"0 0 20px 20px"}}>{allItem?.name ?`${allItem?.name}`:`All`}</Typography>
    <Grid container spacing={3}>
     {foods.filter((e) => e.status === 'show').length > 0 ? (
      foods
@@ -281,7 +351,7 @@ function CreateNewOrder() {
    </Grid>
 
    {/* CART PREVIEW */}
-   {Object.values(cart).length > 0 && (
+   {/* {Object.values(cart).length > 0 && (
     <Box sx={{ mt: 4 }}>
      <Paper sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom>
@@ -310,7 +380,7 @@ function CreateNewOrder() {
       </Box>
      </Paper>
     </Box>
-   )}
+   )} */}
   </Box>
  );
 }
