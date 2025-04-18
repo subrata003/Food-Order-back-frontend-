@@ -171,7 +171,7 @@ export default function Sidebar() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: "80vw" }} margin={3}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: "85vw" ,justifyContent:"center"}} margin={3}>
         <DrawerHeader />
         <SidebarRoutes /> {/* ✅ Renders nested routes correctly */}
       </Box>

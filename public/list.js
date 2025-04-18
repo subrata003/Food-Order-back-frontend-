@@ -1,42 +1,42 @@
 export const OrderList=[
  {
   id:1,
-  name:"salad",
+  name:"Salad",
   img:"https://media.istockphoto.com/id/1454741285/photo/roast-fish-and-vegetable-salad-on-wooden-background.jpg?s=612x612&w=0&k=20&c=Slmk-RLvdR3317E5W2UKLul4y1ZH3axjL2XCNOBZbhE="
  },
  {
   id:2,
-  name:"rolls",
+  name:"Rolls",
   img:"https://t4.ftcdn.net/jpg/07/99/73/31/360_F_799733155_EeVCF8aPqyZC0Rtkf7Q0CUXmywAAc1GC.jpg"
  },
  {
   id:3,
-  name:"deserts",
+  name:"Deserts", //"Deserts"
   img:"https://www.tasteofhome.com/wp-content/uploads/2018/01/Ice-Cream-Sandwich-Dessert_EXPS_FT22_27091_ST_09_07_1.jpg"
  },
  {
   id:4,
-  name:"sandwich",
+  name:"Sandwich",
   img:"https://ichef.bbc.co.uk/ace/standard/1600/food/recipes/club_sandwich_16496_16x9.jpg.webp"
  },
  {
   id:5,
-  name:"cake",
+  name:"Cake",
   img:"https://img.freepik.com/free-photo/assortment-pieces-cake_114579-85732.jpg?semt=ais_hybrid&w=740"
  },
  {
   id:6,
-  name:"pure veg",
+  name:"Pure Veg",
   img:"https://img.clevup.in/268918/1666623916947_SKU-0001_0.jpeg?width=600&format=webp"
  },
  {
   id:7,
-  name:"pasta",
+  name:"Pasta",
   img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGj5fp8DwKOgB02Y1w-suEvsEg_E0eYYdO_A&s"
  },
  {
   id:8,
-  name:"momo",
+  name:"Momo",
   img:"https://junifoods.com/wp-content/uploads/2023/11/Easy-Chicken-Momo-Dumplings-Sajilo-Kukhura-ko-Momo-%E0%A4%B8%E0%A4%9C%E0%A4%BF%E0%A4%B2%E0%A5%8B-%E0%A4%95%E0%A5%81%E0%A4%96%E0%A5%81%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%8B-%E0%A4%AE%E0%A4%AE-480x270.jpg"
  }
 ]
