@@ -46,6 +46,21 @@ export const getUserProfile = async () => {
   }
 };
 
+//get all users
+
+export const getAllUserProfile = async () => {
+  try {
+    const response = await axios.get(`${url}/api/user/allprofile`, {
+      headers: getAuthHeaders(), // Send token for authentication
+    });
+    console.log("Profile response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching profile:", error.response?.data || error.message);
+    return { success: false, message: "Failed to fetch user profile" };
+  }
+};
+
 // Logout function
 export const logoutUser = (navigate) => {
   localStorage.removeItem("token"); // Remove token from localStorage

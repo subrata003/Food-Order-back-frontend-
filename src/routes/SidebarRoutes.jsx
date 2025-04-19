@@ -14,10 +14,7 @@ const SidebarRoutes = () => {
       <Route path="createorder" element={<CreateNewOrder/>}/>
       <Route path="manu" element={<ManuManagement />} />
       <Route path="orders" element={<OrderList />} />
-      
-
-
-      {/* <Route path="profile" element={<Profile/>} /> */}
+      <Route path="profile" element={<Profile/>} />
 
     </Routes>
   );

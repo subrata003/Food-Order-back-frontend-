@@ -25,7 +25,7 @@ import SidebarRoutes from "../routes/SidebarRoutes";
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Avatar, Button, Modal, Paper } from "@mui/material";
+import { Avatar, Button, Modal, Paper, Tooltip } from "@mui/material";
 import { useFood } from "../storeContext/ContextApi";
 import Profile from "../pages/Profile";
 import Notification from "./Notification";
@@ -112,7 +112,7 @@ export default function Sidebar() {
         navigate("/sidebar/orders");
         break;
       case 3:
-        setOpenModal(true);
+       navigate("/sidebar/profile");
         break;
       default:
         break;
@@ -160,6 +160,7 @@ export default function Sidebar() {
         <Divider />
         <List>
           {["Dashbord", "Manu Management", "Orders", "My Profile"].map((text, index) => (
+            <Tooltip title={text} placement="right-start">
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton sx={{ minHeight: 48, justifyContent: open ? "initial" : "center", px: 2.5 }} onClick={() => handleSidebar(index)}>
                 <ListItemIcon sx={{ minWidth: 0, justifyContent: "center", mr: open ? 3 : "auto" }}>
@@ -168,6 +169,7 @@ export default function Sidebar() {
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            </Tooltip>
           ))}
         </List>
       </Drawer>
@@ -175,7 +177,7 @@ export default function Sidebar() {
         <DrawerHeader />
         <SidebarRoutes /> {/* ✅ Renders nested routes correctly */}
       </Box>
-      <Profile openModal={openModal} setOpenModal={setOpenModal} />
+      {/* {openModal && <Profile/>} */}
     </Box>
   );
 }
