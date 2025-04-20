@@ -32,6 +32,30 @@ export const userDetails = async (data) => {
   }
 };
 
+//register
+export const NewUserAdd = async (data) => {
+  try {
+    console.log("Sending login data:", data);
+
+    const backendurl = `${url}/api/user/register`;
+
+    // Sending register request
+    const response = await axios.post(backendurl, data);
+
+    console.log("register response:", response);
+
+    // if (response.data.success) {
+    //   // Store the token in localStorage
+    //   localStorage.setItem("token", response.data.token);
+    // }
+
+    return response.data;
+  } catch (error) {
+    console.error("register Error:", error.response?.data || error.message);
+    return { success: false, message: "register failed" };
+  }
+};
+
 // Function to get user profile
 export const getUserProfile = async () => {
   try {

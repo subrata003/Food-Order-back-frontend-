@@ -18,8 +18,10 @@ import {
   TextField,
   MenuItem
 } from '@mui/material';
-import { getAllUserProfile } from '../apis/user/user';
+import { getAllUserProfile, NewUserAdd } from '../apis/user/user';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from "react-toastify";
+
 
 const style = {
   position: 'absolute',
@@ -48,14 +50,25 @@ function Profile() {
     password: '',
     role: ''
   });
+  const notify = () => {
+    toast.success("User Added Successfully!", {
+      position: "top-right", // Adjust position
+      autoClose: 2000, // Auto-close after 3 sec
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    });
+  };
 
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      const res = await getAllUserProfile();
-      setAllUsers(res.data);
-    };
     fetchAllUsers();
   }, []);
+  const fetchAllUsers = async () => {
+    const res = await getAllUserProfile();
+    setAllUsers(res.data);
+  };
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -76,12 +89,30 @@ function Profile() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (initialData?._id) {
       // update user logic here
     } else {
       // create user logic here
+    }
+    try {
+      const res = await NewUserAdd(formData);
+      if (res.success == true) {
+
+        // alert("User Added Successfully")
+        setOpen(false);
+
+      }
+
+
+    } catch (error) {
+
+    }
+    finally {
+      fetchAllUsers();
+      notify();
+
     }
     console.log("form data is:", formData);
     setOpen(false);
@@ -160,55 +191,76 @@ function Profile() {
 
         {/* All Users List */}
         {userData?.role !== "staff" && (
-          <Paper elevation={4} sx={{ width: 400, p: 3, borderRadius: 3 }}>
-            <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
+          <Card
+            sx={{
+              width: 350,
+              boxShadow: 4,
+              borderRadius: 3,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              p: 2,
+            }}
+          >
+            {/* Header */}
+            <Typography variant="h5" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
               Hotel Person
             </Typography>
-            <List>
-              {filteredUsers.map((user, index) => (
-                <React.Fragment key={user._id || index}>
-                  <ListItem alignItems="flex-start">
-                    <ListItemAvatar>
-                      <Avatar src={user.avatar}>
-                        {!user.avatar && user.name?.charAt(0).toUpperCase()}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={user.name}
-                      secondary={
-                        <>
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                          >
-                            {user.email}
-                          </Typography>
-                          {' — '}
-                          {user.role}
-                        </>
-                      }
-                    />
-                  </ListItem>
-                  {index !== filteredUsers.length - 1 && <Divider />}
-                </React.Fragment>
-              ))}
-            </List>
-            <Button
-              variant='contained'
-              sx={{ marginTop: 2, backgroundColor: '#a7062d', '&:hover': { backgroundColor: '#850423' } }}
-              onClick={addStaff}
-            >
-              Add Staff
-            </Button>
-          </Paper>
+
+            {/* User List */}
+            <Box sx={{ flexGrow: 1, overflowY: 'auto', maxHeight: 400 }}>
+              <List>
+                {filteredUsers.map((user, index) => (
+                  <React.Fragment key={user._id || index}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar src={user.avatar}>
+                          {!user.avatar && user.name?.charAt(0).toUpperCase()}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={<Typography variant="subtitle1">{user.name}</Typography>}
+                        secondary={
+                          <>
+                            <Typography variant="body2" color="text.primary">
+                              {user.email}- <Typography variant="caption" color="text.secondary">
+                                {user.role}
+                              </Typography>
+                            </Typography>
+
+                          </>
+                        }
+                      />
+                    </ListItem>
+                    {index !== filteredUsers.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            </Box>
+
+            {/* Button */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#a7062d',
+                  '&:hover': { backgroundColor: '#850423' },
+                  textTransform: 'none',
+                }}
+                onClick={addStaff}
+              >
+                Add Staff
+              </Button>
+            </Box>
+          </Card>
+
         )}
 
         {/* Modal for Add/Edit Staff */}
         <Modal open={open} onClose={() => setOpen(false)}>
           <Box sx={style}>
             <Typography variant="h6" mb={2}>
-              {initialData?._id ? 'Edit User' : 'Add User'}
+              Add User
             </Typography>
             <form onSubmit={handleSubmit}>
               <TextField
@@ -252,7 +304,11 @@ function Profile() {
                 value={formData.role}
                 onChange={handleChange}
               >
-                {roles.map(role => (
+                {userData?.role === "admin" ? roles.map(role => (
+                  <MenuItem key={role} value={role}>
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </MenuItem>
+                )) : roles.filter(role => role == "staff").map(role => (
                   <MenuItem key={role} value={role}>
                     {role.charAt(0).toUpperCase() + role.slice(1)}
                   </MenuItem>
@@ -260,16 +316,22 @@ function Profile() {
               </TextField>
 
               <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
-                <Button variant="outlined" onClick={() => setOpen(false)}>
+                <Button variant="outlined" onClick={() => setOpen(false)} sx={{ color: "#850423", border: "1px solid #850423" }}>
                   Cancel
                 </Button>
-                <Button variant="contained" type="submit">
-                  {initialData?._id ? 'Update' : 'Create'}
+                <Button variant="contained" type="submit" sx={{
+                  backgroundColor: '#a7062d',
+                  '&:hover': { backgroundColor: '#850423' },
+                  textTransform: 'none',
+                }}>
+                  Create
                 </Button>
               </Box>
+
             </form>
           </Box>
         </Modal>
+        <ToastContainer />
       </Box>
     </>
   );
