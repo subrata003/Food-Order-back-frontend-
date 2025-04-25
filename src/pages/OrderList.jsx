@@ -315,13 +315,28 @@ const OrderList = () => {
                         <>
                           {values.items.map((item, index) => (
                             <Box key={index} sx={{ display: "flex", gap: 1, mb: 2 }}>
-                              <TextField
+                              {/* <TextField
                                 label="Name"
                                 name={`items.${index}.name`}
                                 value={item.name}
                                 onChange={handleChange}
                                 disabled={isCompleted}
-                              />
+                              /> */}
+                              <Select
+                                fullWidth
+                                name={`items.${index}.status`}
+                                value={values.items[index].status}
+                                onChange={handleChange}
+                                // onBlur={handleBlur}
+                                sx={{ my: 2 }}
+                                disabled={isCompleted}
+                              >
+                                <MenuItem value="Pending">Pending</MenuItem>
+                                <MenuItem value="Processing">Processing</MenuItem>
+                                <MenuItem value="Completed">Completed</MenuItem>
+                                <MenuItem value="Canceled">Canceled</MenuItem>
+                              </Select>
+
                               <TextField
                                 label="Price"
                                 name={`items.${index}.price`}
