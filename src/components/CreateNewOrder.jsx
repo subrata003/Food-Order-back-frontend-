@@ -16,6 +16,7 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import axios from 'axios';
 import { OrderList } from '../../public/list';
 import { SignLanguage } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 
 function CreateNewOrder() {
@@ -23,6 +24,9 @@ function CreateNewOrder() {
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState({});
   const [singleHeader, setSingleHeader] = useState('')
+  const selectedOrder = useSelector((state) => state.updateorder.list);
+  console.log("selectedOrder is :", selectedOrder);
+
   //  console.log(foods?.category,singleHeader);
   //  console.log(foods,singleHeader);
   console.log("cart is :", cart);
@@ -370,12 +374,49 @@ function CreateNewOrder() {
       </Grid>
 
       {/* CART PREVIEW */}
-      {Object.values(cart).length > 0 && (
+
+
+      {/* update food */}
+      {selectedOrder.items?.length > 0 ? Object.values(cart).length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
-              Cart Preview
+              Cart Preview w
             </Typography>
+            {selectedOrder.items?.map((e) => (
+              <Box
+                key={e.foodId}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  boxShadow: 2,
+                  backgroundColor: '#fff',
+                  border: '1px solid #ccc',
+                  maxWidth: 600,
+                  mx: 'auto'
+                }}
+              >
+                {/* Left section: Name and Quantity x Price */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                    {e.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {e.quantity} x ₹{e.price}
+                  </Typography>
+                </Box>
+
+                {/* Right section: Total Price */}
+                <Typography variant="subtitle1" fontWeight="bold" color="success.main">
+                  ₹{e.quantity * e.price}
+                </Typography>
+              </Box>
+
+            ))}
             {Object.values(cart).map((item) => (
               <Box
                 key={item.foodId}
@@ -388,7 +429,7 @@ function CreateNewOrder() {
                   borderRadius: 2,
                   boxShadow: 1,
                   // backgroundColor: "#f9f9f9",
-                  borderBottom:"2px solid #a7062d"
+                  borderBottom: "2px solid #a7062d"
                 }}
               >
                 {/* Left section: Image and Name */}
@@ -418,7 +459,7 @@ function CreateNewOrder() {
             </Typography>
             <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
               <Button variant="contained" color="primary" onClick={placeOrder}>
-                Place Order
+                update Order
               </Button>
               <Button variant="outlined" color="error" onClick={cancelOrder}>
                 Cancel Order
@@ -426,7 +467,65 @@ function CreateNewOrder() {
             </Box>
           </Paper>
         </Box>
-      )}
+      ) :
+        Object.values(cart).length > 0 && (
+          <Box sx={{ mt: 4 }}>
+            <Paper sx={{ p: 3 }}>
+              <Typography variant="h5" gutterBottom>
+                Cart Preview
+              </Typography>
+              {Object.values(cart).map((item) => (
+                <Box
+                  key={item.foodId}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mb: 2,
+                    p: 2,
+                    borderRadius: 2,
+                    boxShadow: 1,
+                    // backgroundColor: "#f9f9f9",
+                    borderBottom: "2px solid #a7062d"
+                  }}
+                >
+                  {/* Left section: Image and Name */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box
+                      component="img"
+                      src={`${url}/images/${item.img}`}
+                      alt={item.name}
+                      sx={{ width: 60, height: 60, borderRadius: 2, objectFit: "cover" }}
+                    />
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {item.name}
+                    </Typography>
+                  </Box>
+
+                  {/* Right section: Quantity x Price */}
+                  <Typography variant="subtitle1" fontWeight="500">
+                    {item.quantity} x ₹{item.price} = <strong>₹{item.quantity * item.price}</strong>
+                  </Typography>
+                </Box>
+
+              ))}
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="h6">
+                Total: ₹
+                {Object.values(cart).reduce((acc, item) => acc + item.quantity * item.price, 0)}
+              </Typography>
+              <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+                <Button variant="contained" color="primary" onClick={placeOrder}>
+                  Place Order
+                </Button>
+                <Button variant="outlined" color="error" onClick={cancelOrder}>
+                  Cancel Order
+                </Button>
+              </Box>
+            </Paper>
+          </Box>
+        )}
+
     </Box>
   );
 }

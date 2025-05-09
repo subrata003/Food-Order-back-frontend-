@@ -34,6 +34,9 @@ import { format, isSameDay, isSameWeek, isSameMonth, compareDesc } from "date-fn
 import { orderUpdate } from "../apis/order/order";
 import SearchIcon from '@mui/icons-material/Search';
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { setOrder } from "../redux/slice/updateorderSlice";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const OrderList = () => {
   const { orderList, fetchAllOrders } = useFood();
@@ -44,6 +47,8 @@ const OrderList = () => {
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState([])
   const rowsPerPage = 6;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAllOrders();
@@ -105,7 +110,16 @@ const OrderList = () => {
     const term = String(searchTerm || "").toLowerCase();
     return item.orderId?.toString().toLowerCase().includes(term);
   });
-  ;
+
+  const updateOrderForUser=()=>{
+    console.log("update order for user");
+    console.log(selectedOrder);
+    dispatch(setOrder(selectedOrder))
+    navigate("/sidebar/createorder")
+    
+    
+  }
+
 
 
   return (
@@ -315,28 +329,14 @@ const OrderList = () => {
                         <>
                           {values.items.map((item, index) => (
                             <Box key={index} sx={{ display: "flex", gap: 1, mb: 2 }}>
-                              {/* <TextField
+                              <TextField
                                 label="Name"
                                 name={`items.${index}.name`}
                                 value={item.name}
                                 onChange={handleChange}
                                 disabled={isCompleted}
-                              /> */}
-                              <Select
-                                fullWidth
-                                name={`items.${index}.status`}
-                                value={values.items[index].status}
-                                onChange={handleChange}
-                                // onBlur={handleBlur}
-                                sx={{ my: 2 }}
-                                disabled={isCompleted}
-                              >
-                                <MenuItem value="Pending">Pending</MenuItem>
-                                <MenuItem value="Processing">Processing</MenuItem>
-                                <MenuItem value="Completed">Completed</MenuItem>
-                                <MenuItem value="Canceled">Canceled</MenuItem>
-                              </Select>
-
+                              />
+                             
                               <TextField
                                 label="Price"
                                 name={`items.${index}.price`}
@@ -364,12 +364,13 @@ const OrderList = () => {
                           ))}
                           <Button
                             startIcon={<AddCircleIcon sx={{ color: "#da1142" }} />}
-                            onClick={() => push({ name: "", price: "", quantity: "" })}
+                            onClick={updateOrderForUser}
                             disabled={isCompleted}
                             sx={{ color: "#da1142" }}
                           >
                             Add Item
                           </Button>
+                          <Outlet />
                         </>
                       )}
                     </FieldArray>
