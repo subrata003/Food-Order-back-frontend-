@@ -334,7 +334,7 @@ const OrderList = () => {
                                 name={`items.${index}.name`}
                                 value={item.name}
                                 onChange={handleChange}
-                                disabled={isCompleted}
+                                disabled={true}
                               />
                              
                               <TextField
@@ -343,7 +343,7 @@ const OrderList = () => {
                                 type="number"
                                 value={item.price}
                                 onChange={handleChange}
-                                disabled={isCompleted}
+                                disabled={true}
                               />
                               <TextField
                                 label="Qty"
@@ -351,7 +351,7 @@ const OrderList = () => {
                                 type="number"
                                 value={item.quantity}
                                 onChange={handleChange}
-                                disabled={isCompleted}
+                                disabled={true}
                               />
                               <IconButton
                                 color="error"

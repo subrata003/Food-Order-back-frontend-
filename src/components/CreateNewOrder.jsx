@@ -17,10 +17,14 @@ import axios from 'axios';
 import { OrderList } from '../../public/list';
 import { SignLanguage } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
+import { orderUpdate } from '../apis/order/order';
+import { useFood } from '../storeContext/ContextApi';
 
 
 function CreateNewOrder() {
   const url = 'http://localhost:8080';
+  const { fetchAllOrders } = useFood();
+
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState({});
   const [singleHeader, setSingleHeader] = useState('')
@@ -38,7 +42,7 @@ function CreateNewOrder() {
       setFoods(res.data);
     };
     fetchAllFood();
-  }, []);
+  }, [foods]);
 
   const handleAdd = (item) => {
     setCart((prev) => {
@@ -115,6 +119,90 @@ function CreateNewOrder() {
   }
 
   const showHeaderFoods = singleHeader ? foods.filter((item) => item.category === singleHeader) : foods;
+
+  /////////
+
+  // Merge existing items and cart items by `foodId`
+  const mergeItems = (oldItems = [], newItems = []) => {
+    const mergedMap = {};
+
+    // Add old items first
+    oldItems.forEach((item) => {
+      mergedMap[item.foodId] = { ...item };
+    });
+
+    // Merge or add new items
+    newItems.forEach((item) => {
+      if (mergedMap[item.foodId]) {
+        // Update quantity if item exists
+        mergedMap[item.foodId].quantity += item.quantity;
+      } else {
+        // Add new item
+        mergedMap[item.foodId] = { ...item };
+      }
+    });
+
+    return Object.values(mergedMap);
+  };
+
+
+  const addUpdateOrder = async () => {
+    const existingItems = selectedOrder.items || [];
+    const newCartItems = Object.values(cart);
+
+    // Merge items by foodId
+    const combinedItems = mergeItems(existingItems, newCartItems);
+
+    // Remove `img` field and ensure structure
+    const cleanedItems = combinedItems.map(({ img, ...item }) => item);
+
+    const updatedOrder = {
+      _id: selectedOrder._id,                      // required for update
+      orderId: selectedOrder.orderId,
+      userName: selectedOrder.userName,
+      phoneNo: selectedOrder.phoneNo,
+      tableNo: selectedOrder.tableNo,
+      status: selectedOrder.status,
+      totalAmount: cleanedItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toString(),
+      items: cleanedItems,
+      createdAt: selectedOrder.createdAt,
+    };
+
+    console.log("Updated Order:", updatedOrder);
+
+    try {
+      const res = await orderUpdate(updatedOrder._id, updatedOrder);
+      if (res.success == true) {
+        console.log("order updated");
+        fetchAllOrders();
+      }// this sends to your backend
+      setCart({});
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
+  };
+
+
+
+
+
+  //   const addUpdateOrder=()=>{
+  //     const updatedOrder = {
+  //       ...selectedOrder,
+  //       items: combinedItems,
+  //     };
+  //     console.log("updatedOrder", updatedOrder);
+
+  //     // setSelectedOrder(updatedOrder);
+  //     setCart({});
+  //   }
+
+  //   const combinedItems = [
+  //   ...(selectedOrder.items || []),
+  //   ...Object.values(cart),
+  // ];
+  // console.log("combinedItems", combinedItems);
+
 
 
 
@@ -379,93 +467,72 @@ function CreateNewOrder() {
       {/* update food */}
       {selectedOrder.items?.length > 0 ? Object.values(cart).length > 0 && (
         <Box sx={{ mt: 4 }}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{ p: 3, maxWidth: 700, mx: 'auto', mt: 4 }}>
             <Typography variant="h5" gutterBottom>
-              Cart Preview w
+              Cart Preview
             </Typography>
-            {selectedOrder.items?.map((e) => (
-              <Box
-                key={e.foodId}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  mb: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  backgroundColor: '#fff',
-                  border: '1px solid #ccc',
-                  maxWidth: 600,
-                  mx: 'auto'
-                }}
-              >
-                {/* Left section: Name and Quantity x Price */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Typography variant="subtitle1" fontWeight="bold" color="primary">
-                    {e.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {e.quantity} x ₹{e.price}
-                  </Typography>
-                </Box>
 
-                {/* Right section: Total Price */}
-                <Typography variant="subtitle1" fontWeight="bold" color="success.main">
-                  ₹{e.quantity * e.price}
-                </Typography>
-              </Box>
+            {/* Cart Items: Previous + New */}
+            <Box
+              sx={{
+                border: '1px solid #ccc',
+                borderRadius: 2,
+                p: 2,
+                backgroundColor: '#fafafa',
+                boxShadow: 1,
+                mb: 2,
+              }}
+            >
+              {[...(selectedOrder.items || []), ...Object.values(cart)].map((item, idx, arr) => (
+                <Box
+                  key={`${item.foodId}-${idx}`}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    py: 1,
+                    borderBottom: idx !== arr.length - 1 ? '1px dashed #ddd' : 'none',
+                  }}
+                >
+                  {/* Item Name and Quantity */}
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight="600">
+                      {item.name}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {item.quantity} x ₹{item.price}
+                    </Typography>
+                  </Box>
 
-            ))}
-            {Object.values(cart).map((item) => (
-              <Box
-                key={item.foodId}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  mb: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  boxShadow: 1,
-                  // backgroundColor: "#f9f9f9",
-                  borderBottom: "2px solid #a7062d"
-                }}
-              >
-                {/* Left section: Image and Name */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Box
-                    component="img"
-                    src={`${url}/images/${item.img}`}
-                    alt={item.name}
-                    sx={{ width: 60, height: 60, borderRadius: 2, objectFit: "cover" }}
-                  />
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {item.name}
+                  {/* Total Price */}
+                  <Typography variant="subtitle2" fontWeight="bold" color="success.main">
+                    ₹{item.quantity * item.price}
                   </Typography>
                 </Box>
+              ))}
+            </Box>
 
-                {/* Right section: Quantity x Price */}
-                <Typography variant="subtitle1" fontWeight="500">
-                  {item.quantity} x ₹{item.price} = <strong>₹{item.quantity * item.price}</strong>
-                </Typography>
-              </Box>
-
-            ))}
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="h6">
+            {/* Total Calculation */}
+            <Typography variant="h6" align="right">
               Total: ₹
-              {Object.values(cart).reduce((acc, item) => acc + item.quantity * item.price, 0)}
+              {[...(selectedOrder.items || []), ...Object.values(cart)].reduce(
+                (acc, item) => acc + item.quantity * item.price,
+                0
+              )}
             </Typography>
-            <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-              <Button variant="contained" color="primary" onClick={placeOrder}>
-                update Order
+
+            {/* Action Buttons */}
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+              <Button variant="contained" color="primary" onClick={addUpdateOrder}>
+                Update Order
               </Button>
               <Button variant="outlined" color="error" onClick={cancelOrder}>
                 Cancel Order
               </Button>
             </Box>
           </Paper>
+
+
         </Box>
       ) :
         Object.values(cart).length > 0 && (
