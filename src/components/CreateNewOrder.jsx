@@ -19,12 +19,13 @@ import { SignLanguage } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { orderUpdate } from '../apis/order/order';
 import { useFood } from '../storeContext/ContextApi';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 
 function CreateNewOrder() {
   const url = 'http://localhost:8080';
   const { fetchAllOrders } = useFood();
-
+  const navigate=useNavigate();
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState({});
   const [singleHeader, setSingleHeader] = useState('')
@@ -42,7 +43,7 @@ function CreateNewOrder() {
       setFoods(res.data);
     };
     fetchAllFood();
-  }, [foods]);
+  }, []);
 
   const handleAdd = (item) => {
     setCart((prev) => {
@@ -94,6 +95,7 @@ function CreateNewOrder() {
       phoneNo: '9876543210',
       tableNo: 'A2',
       items: selectedItems,
+      payment:"Unpaid",
       totalAmount,
     };
 
@@ -163,6 +165,7 @@ function CreateNewOrder() {
       phoneNo: selectedOrder.phoneNo,
       tableNo: selectedOrder.tableNo,
       status: selectedOrder.status,
+      payment: selectedOrder.payment,
       totalAmount: cleanedItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toString(),
       items: cleanedItems,
       createdAt: selectedOrder.createdAt,
@@ -174,6 +177,7 @@ function CreateNewOrder() {
       const res = await orderUpdate(updatedOrder._id, updatedOrder);
       if (res.success == true) {
         console.log("order updated");
+        navigate("/sidebar/orders")
         fetchAllOrders();
       }// this sends to your backend
       setCart({});
@@ -526,6 +530,7 @@ function CreateNewOrder() {
               <Button variant="contained" color="primary" onClick={addUpdateOrder}>
                 Update Order
               </Button>
+              <Outlet />
               <Button variant="outlined" color="error" onClick={cancelOrder}>
                 Cancel Order
               </Button>

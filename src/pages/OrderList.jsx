@@ -24,6 +24,7 @@ import {
   TablePagination,
   InputAdornment,
   Chip,
+  Drawer,
 } from "@mui/material";
 import { Formik, Form, FieldArray } from "formik";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -49,6 +50,7 @@ const OrderList = () => {
   const rowsPerPage = 6;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchAllOrders();
@@ -61,6 +63,8 @@ const OrderList = () => {
     setOrders(sortedOrders);
   }, [orderList]);
 
+
+
   const handleEdit = (order) => {
     setSelectedOrder(order);
     setOpenModal(true);
@@ -72,8 +76,21 @@ const OrderList = () => {
     console.log("id is :", id);
 
 
+    const total = values.items.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+
+    const updatedValues = {
+      ...values,
+      totalAmount: total,
+    }
+    // setFieldValue("totalAmount", total);
+
+
+
     try {
-      const res = await orderUpdate(id, values)
+      const res = await orderUpdate(id, updatedValues)
       if (res.success == true) {
         console.log("order updated");
         fetchAllOrders();
@@ -111,49 +128,71 @@ const OrderList = () => {
     return item.orderId?.toString().toLowerCase().includes(term);
   });
 
-  const updateOrderForUser=()=>{
+  const updateOrderForUser = () => {
     console.log("update order for user");
     console.log(selectedOrder);
     dispatch(setOrder(selectedOrder))
     navigate("/sidebar/createorder")
-    
-    
+
+
   }
 
 
 
   return (
-    <Box sx={{ p: 4, maxWidth: "100%", mx: "auto" }}>
-      <Grid container spacing={15}>
-        {/* Orders List Section */}
-        <Grid item xs={12} md={8}>
-          <Typography sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="h5" textAlign="center" mb={3} fontWeight={600}>
-              Orders List
-            </Typography>
-            <Typography variant="h5" textAlign="center" mb={3} fontWeight={600}>
+    <Box sx={{ p: 4, maxWidth: "100vw", mx: "auto" }}>
+      <Grid container spacing={3}>
+        {/* Orders List */}
+        <Grid item xs={12} md={12}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h5" fontWeight={600}>Orders List</Typography>
+            <Box display="flex" gap={2}>
               <TextField
-                placeholder="Search by orderId"
+                placeholder="Search by Order ID"
                 variant="outlined"
                 size="small"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ width: 300, marginBottom: 2 }}
+                sx={{ width: 300 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon color="action" />
                     </InputAdornment>
                   ),
+                  sx: {
+                    borderRadius: "10px",
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#da1142', // red when focused
+                    },
+                  },
+                }}
+                InputLabelProps={{
+                  sx: {
+                    '&.Mui-focused': {
+                      color: '#da1142', // optional: make label red too when focused
+                    },
+                  },
                 }}
               />
-            </Typography>
-          </Typography>
-          <TableContainer component={Paper} sx={{ boxShadow: 4, borderRadius: 2, width: "50vw" }}>
+
+
+              <Button
+                variant="contained"
+                onClick={() => setDrawerOpen(true)}
+                sx={{ backgroundColor: "#da1142", borderRadius: '10px' }}
+              >
+                View Order History
+              </Button>
+            </Box>
+          </Box>
+
+          {/* Your TableComponent here */}
+          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2 }}>
             <Table>
               <TableHead>
                 <TableRow sx={{ bgcolor: "#da1142" }}>
-                  {['OrderId', 'User', 'Phone', 'Items', 'Total (₹)', 'Status', 'Date', 'Action'].map((head) => (
+                  {['OrderId', 'User', 'Phone', 'Items', 'Total (₹)', 'Payment', 'Status', 'Date', 'Action'].map((head) => (
                     <TableCell key={head} sx={{ color: "white", fontWeight: "bold" }}>
                       {head}
                     </TableCell>
@@ -170,17 +209,34 @@ const OrderList = () => {
                       {order.items.map((item) => `${item.name}${item.quantity > 1 ? ` x${item.quantity}` : ""}`).join(", ")}
                     </TableCell>
                     <TableCell>₹{order.totalAmount}</TableCell>
+                    <TableCell>
+                      <Chip
+                        sx={{ fontSize: "14px" }}
+                        variant="outlined"
+                        label={order.payment}
+                        color={
+                          order.payment === 'Cash' || order.payment === 'Online' ? 'success' :
+                            order.payment === 'Unpaid' ? 'error' : 'default'
+                        }
 
-                    <TableCell><Chip label={order.status} color={
-                      order.status === 'Completed' ? 'success' :
-                        order.status === 'Pending' ? 'warning' :
-                          order.status === 'Processing' ? 'info' :
-                            order.status === 'canceled' ? 'error' :
-                              'default'
-                    } /></TableCell>
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={order.status}
+                        color={
+                          order.status === 'Completed' ? 'success' :
+                            order.status === 'Pending' ? 'warning' :
+                              order.status === 'Processing' ? 'info' :
+                                order.status === 'canceled' ? 'error' : 'default'
+                        }
+                      />
+                    </TableCell>
                     <TableCell>{format(new Date(order.createdAt), 'hh:mm a dd/MM/yy')}</TableCell>
                     <TableCell>
-                      <Button onClick={() => handleEdit(order)}> <EditCalendarOutlinedIcon sx={{ color: "#f41f53 " }} /> </Button>
+                      <Button onClick={() => handleEdit(order)}>
+                        <EditCalendarOutlinedIcon sx={{ color: "#f41f53" }} />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -196,101 +252,104 @@ const OrderList = () => {
             />
           </TableContainer>
         </Grid>
+      </Grid>
 
-        {/* Order History Section */}
-        <Grid item xs={12} md={4}>
-          <Typography variant="h6" textAlign="center" mb={2} fontWeight={600}>
-            Order History
-          </Typography>
-          <Tabs
-            value={historyFilter}
-            onChange={(e, newValue) => setHistoryFilter(newValue)}
-            centered
-            variant="fullWidth"
-            TabIndicatorProps={{
-              style: {
-                backgroundColor: "#da1142",// '#ff9800', // custom underline color
-              },
-            }}
-          >
-            <Tab sx={{
-              '&.Mui-selected': {
-                color: "#f41f53 ",// '#ff9800', // selected text color
-                fontWeight: 'bold',
-              },
-            }} label="Today" value="Today" />
-            <Tab sx={{
-              '&.Mui-selected': {
-                color: "#f41f53 ",//'#ff9800', // selected text color
-                fontWeight: 'bold',
-              },
-            }} label="This Week" value="This Week" />
-            <Tab sx={{
-              '&.Mui-selected': {
-                color: "#f41f53 ", // '#ff9800', // selected text color
-                fontWeight: 'bold',
-              },
-            }} label="This Month" value="This Month" />
-          </Tabs>
-          <Box
-            sx={{
-              maxHeight: 450,
-              overflowY: "auto",
-              mt: 2,
-              pr: 1,
-              "&::-webkit-scrollbar": {
-                width: "8px",
-              },
-              "&::-webkit-scrollbar-track": {
-                backgroundColor: "#f0f0f0",
-                borderRadius: "4px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#da1142",
-                borderRadius: "8px",
-              },
-              "&::-webkit-scrollbar-thumb:hover": {
-                backgroundColor: "#b70d38",
-              },
-            }}
-          >
-            {filteredOrders.map((order) => (
-              <Card key={order._id} sx={{ mb: 2, boxShadow: 2, borderBottom: "2px solid #da1142" }}>
-                <CardContent>
-                  <Typography variant="body1" fontWeight={600}>
-                    {order.userName} - ₹{order.totalAmount} <Chip label={order.status} variant="outlined" color={
+      {/* MUI Drawer for Order History */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{ sx: { width: { xs: '100%', sm: 400 }, padding: 2 } }}
+      >
+        <Typography variant="h6" fontWeight={600} textAlign="center" mb={2}>
+          Order History
+        </Typography>
+        <Tabs
+          value={historyFilter}
+          onChange={(e, newValue) => setHistoryFilter(newValue)}
+          centered
+          variant="fullWidth"
+          TabIndicatorProps={{ style: { backgroundColor: "#da1142" } }}
+        >
+          <Tab label="Today" value="Today" />
+          <Tab label="This Week" value="This Week" />
+          <Tab label="This Month" value="This Month" />
+        </Tabs>
+        <Box
+          sx={{
+            maxHeight: 450,
+            overflowY: "auto",
+            mt: 2,
+            pr: 1,
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "#f0f0f0",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#da1142",
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: "#b70d38",
+            },
+          }}
+        >
+          {filteredOrders.map((order) => (
+            <Card key={order._id} sx={{ mb: 2, boxShadow: 2, borderBottom: "2px solid #da1142" }}>
+              <CardContent>
+                <Typography variant="body1" fontWeight={600}>
+                  {order.userName} - ₹{order.totalAmount}
+                  <Chip
+                    label={order.status}
+                    variant="outlined"
+                    color={
                       order.status === 'Completed' ? 'success' :
                         order.status === 'Pending' ? 'warning' :
                           order.status === 'Processing' ? 'info' :
-                            order.status === 'canceled' ? 'error' :
-                              'default'
-                    } />
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {/* {dayjs(order.createdAt).format("DD MMM YYYY, hh:mm A")} */}
-                    {`${moment(order.createdAt).fromNow()} (${moment(order.createdAt).format("DD MMM YYYY")})`}
-
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-
-        </Grid>
-      </Grid>
+                            order.status === 'canceled' ? 'error' : 'default'
+                    }
+                    sx={{ ml: 1 }}
+                  />
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {`${moment(order.createdAt).fromNow()} (${moment(order.createdAt).format("DD MMM YYYY")})`}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Drawer>
 
       {/* Edit Order Modal */}
       {selectedOrder && (
-        <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Modal open={openModal} onClose={() => setOpenModal(false)} disableScrollLock={true}>
           <Box
             sx={{
               p: 4,
-              width: "50%",
+              width: "90%",
+              maxWidth: 600,
+              maxHeight: "90vh",
+              overflowY: "auto",
               mx: "auto",
-              mt: 10,
+              my: "5vh",
               bgcolor: "white",
               borderRadius: 3,
               boxShadow: 4,
+
+              // Scrollbar styling
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: 'white',
+                borderRadius: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                backgroundColor: 'white',
+              },
             }}
           >
             <Typography variant="h6" mb={2} fontWeight={600}>
@@ -321,7 +380,8 @@ const OrderList = () => {
                       value={values.phoneNo}
                       onChange={handleChange}
                       sx={{ mb: 2 }}
-                      disabled={isCompleted}
+                      disabled={isCompleted || isCanceled}
+
                     />
 
                     <FieldArray name="items">
@@ -336,7 +396,7 @@ const OrderList = () => {
                                 onChange={handleChange}
                                 disabled={true}
                               />
-                             
+
                               <TextField
                                 label="Price"
                                 name={`items.${index}.price`}
@@ -351,7 +411,9 @@ const OrderList = () => {
                                 type="number"
                                 value={item.quantity}
                                 onChange={handleChange}
-                                disabled={true}
+                                disabled={isCompleted || isCanceled}
+
+
                               />
                               <IconButton
                                 color="error"
@@ -377,11 +439,27 @@ const OrderList = () => {
 
                     <Select
                       fullWidth
+                      name="payment"
+                      value={values.payment}
+                      onChange={handleChange}
+                      sx={{ my: 2 }}
+                      disabled={isCompleted || isCanceled}
+
+                    >
+                      <MenuItem value="Cash">Cash</MenuItem>
+                      <MenuItem value="Online">Online</MenuItem>
+                      <MenuItem value="Unpaid">Unpaid</MenuItem>
+
+                    </Select>
+
+                    <Select
+                      fullWidth
                       name="status"
                       value={values.status}
                       onChange={handleChange}
                       sx={{ my: 2 }}
-                      disabled={isCompleted}
+                      disabled={isCompleted || isCanceled}
+
                     >
                       <MenuItem value="Pending">Pending</MenuItem>
                       <MenuItem value="Processing">Processing</MenuItem>
