@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PieChart } from '@mui/x-charts';
 import { useFood } from '../storeContext/ContextApi';
 import { compareDesc, isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
-import { Box, Button, ButtonGroup, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, Typography } from '@mui/material';
 
 function Pai() {
  const { orderList } = useFood();
@@ -54,29 +54,37 @@ function Pai() {
  };
 
  return (
-  <Box
-   display="flex"
-   flexDirection="column"
-   alignItems="center"
-   justifyContent="center"
-   sx={{ minHeight: '70vh', padding: 2 }}
-  >
-   <Typography variant="h5" mb={2}>
+  <Card sx={{ p: 2 }}>
+   <Typography variant="subtitle1" mb={1}>
     Order Status - {filterLabels[filterType]}
    </Typography>
 
-   <ButtonGroup variant="contained" sx={{ mb: 4 }}>
-    <Button onClick={() => setFilterType("today")}>Today</Button>
-    <Button onClick={() => setFilterType("week")}>This Week</Button>
-    <Button onClick={() => setFilterType("month")}>This Month</Button>
-   </ButtonGroup>
+   <Box
+    sx={{
+     minHeight: 300,
+     backgroundColor: "#f0f0f0",
+     display: "flex",
+     flexDirection: "column",
+     alignItems: "center",
+     justifyContent: "center",
+     borderRadius: 2,
+     p: 2,
+    }}
+   >
+    <ButtonGroup variant="contained" sx={{ mb: 2 }}>
+     <Button onClick={() => setFilterType("today")}>Today</Button>
+     <Button onClick={() => setFilterType("week")}>This Week</Button>
+     <Button onClick={() => setFilterType("month")}>This Month</Button>
+    </ButtonGroup>
 
-   <PieChart
-    series={[{ data: chartData }]}
-    width={400}
-    height={300}
-   />
-  </Box>
+    <PieChart
+     series={[{ data: chartData }]}
+     width={400}
+     height={300}
+    />
+   </Box>
+  </Card>
+
  );
 }
 
