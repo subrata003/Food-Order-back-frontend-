@@ -8,6 +8,8 @@ import {
   Divider,
   Paper,
   Modal,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { getAllFood } from '../apis/food/addFood';
@@ -21,6 +23,19 @@ import { useSelector } from 'react-redux';
 import { orderUpdate } from '../apis/order/order';
 import { useFood } from '../storeContext/ContextApi';
 import { Outlet, useNavigate } from 'react-router-dom';
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+// Sample table numbers
+const tableOptions = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'];
 
 
 function CreateNewOrder() {
@@ -33,11 +48,71 @@ function CreateNewOrder() {
   const [singleHeader, setSingleHeader] = useState('')
   const selectedOrder = useSelector((state) => state.updateorder.list);
   console.log("selectedOrder is :", selectedOrder);
+  // const [openModal, setOpenModal] = useState(false);
 
 
   //  console.log(foods?.category,singleHeader);
   //  console.log(foods,singleHeader);
   console.log("cart is :", cart);
+
+
+
+  //////////add user details ///////////////
+
+  const selectedItems = Object.values(cart);
+  const totalAmount = selectedItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+
+
+  const [formData, setFormData] = useState({
+    userName: 'Subrata Roy',
+    phoneNo: '9876543210',
+    tableNo: 'A2',
+    items: selectedItems,
+    payment: 'Unpaid',
+    totalAmount
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    console.log('Order Placed:', formData);
+    // const selectedItems = Object.values(cart);
+    // const totalAmount = selectedItems.reduce(
+    //   (acc, item) => acc + item.price * item.quantity,
+    //   0
+    // );
+
+    // const payload = {
+    //   userName: 'Subrata Roy',
+    //   phoneNo: '9876543210',
+    //   tableNo: 'A2',
+    //   items: selectedItems,
+    //   payment: "Unpaid",
+    //   totalAmount,
+    // };
+
+    // try {
+    //   await axios.post(`${url}/api/food/order/add`, formData);
+    //   alert('Order placed!');
+    //   setCart({});
+    // } catch (err) {
+    //   console.error(err);
+    //   alert('Error placing order');
+    // }
+
+    handleClose(); // Close modal after submission
+  };
+
+  ////////////////////////////////
 
 
   useEffect(() => {
@@ -86,31 +161,34 @@ function CreateNewOrder() {
     });
   };
 
-  const placeOrder = async () => {
-    const selectedItems = Object.values(cart);
-    const totalAmount = selectedItems.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
+  // const placeOrder = async () => {
+  //   const selectedItems = Object.values(cart);
+  //   const totalAmount = selectedItems.reduce(
+  //     (acc, item) => acc + item.price * item.quantity,
+  //     0
+  //   );
 
-    const payload = {
-      userName: 'Subrata Roy',
-      phoneNo: '9876543210',
-      tableNo: 'A2',
-      items: selectedItems,
-      payment: "Unpaid",
-      totalAmount,
-    };
+  //   const payload = {
+  //     userName: 'Subrata Roy',
+  //     phoneNo: '9876543210',
+  //     tableNo: 'A2',
+  //     items: selectedItems,
+  //     payment: "Unpaid",
+  //     totalAmount,
+  //   };
 
-    try {
-      await axios.post(`${url}/api/food/order/add`, payload);
-      alert('Order placed!');
-      setCart({});
-    } catch (err) {
-      console.error(err);
-      alert('Error placing order');
-    }
-  };
+  //   try {
+  //     await axios.post(`${url}/api/food/order/add`, payload);
+  //     alert('Order placed!');
+  //     setCart({});
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert('Error placing order');
+  //   }
+  // };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const cancelOrder = () => {
     setCart({});
@@ -472,7 +550,7 @@ function CreateNewOrder() {
         </Grid>
         {/* CART PREVIEW */}
 
-     
+
         {/* update food */}
         {selectedOrder.items?.length > 0 ? Object.values(cart).length > 0 && (
           <Box sx={{ mt: 4 }}>
@@ -592,7 +670,7 @@ function CreateNewOrder() {
                   {Object.values(cart).reduce((acc, item) => acc + item.quantity * item.price, 0)}
                 </Typography>
                 <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-                  <Button variant="contained" color="primary" onClick={placeOrder}>
+                  <Button variant="contained" color="primary" onClick={handleOpen}>
                     Place Order
                   </Button>
                   <Button variant="outlined" color="error" onClick={cancelOrder}>
@@ -603,13 +681,92 @@ function CreateNewOrder() {
             </Box>
           )}
 
-      
+
 
 
 
 
       </Box>
-      
+      {/* open user order details  */}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="order-modal-title" variant="h6" component="h2" gutterBottom>
+            Place Order
+          </Typography>
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="User Name"
+            name="userName"
+            value={formData.userName}
+            onChange={handleChange}
+          />
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Phone Number"
+            name="phoneNo"
+            value={formData.phoneNo}
+            onChange={handleChange}
+          />
+
+          <TextField
+            select
+            fullWidth
+            margin="normal"
+            label="Table Number"
+            name="tableNo"
+            value={formData.tableNo}
+            onChange={handleChange}
+          >
+            {tableOptions.map((table) => (
+              <MenuItem key={table} value={table}>
+                {table}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            fullWidth
+            margin="normal"
+            label="Payment Status"
+            name="payment"
+            value={formData.payment}
+            onChange={handleChange}
+          >
+            <MenuItem value="Unpaid">Unpaid</MenuItem>
+            <MenuItem value="Paid">Paid</MenuItem>
+          </TextField>
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Total Amount"
+            name="totalAmount"
+            value={formData.totalAmount}
+            InputProps={{ readOnly: true }}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={handleSubmit}
+          >
+            Submit Order
+          </Button>
+        </Box>
+      </Modal>
+
     </>
   );
 }
