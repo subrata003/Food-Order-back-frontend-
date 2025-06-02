@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { orderUpdate } from '../apis/order/order';
 import { useFood } from '../storeContext/ContextApi';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { getAllTables } from '../apis/table/table';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -35,7 +36,7 @@ const style = {
   p: 4,
 };
 // Sample table numbers
-const tableOptions = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'];
+// const tableOptions = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'];
 
 
 function CreateNewOrder() {
@@ -45,6 +46,9 @@ function CreateNewOrder() {
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState({});
   const [open, setOpen] = useState(false);
+  const [allTables, setAllTables] = useState([])
+  console.log("allTables is is ", allTables);
+
   const [singleHeader, setSingleHeader] = useState('')
   const selectedOrder = useSelector((state) => state.updateorder.list);
   console.log("selectedOrder is :", selectedOrder);
@@ -55,25 +59,51 @@ function CreateNewOrder() {
   //  console.log(foods,singleHeader);
   console.log("cart is :", cart);
 
+  //tables
+
+  const freeTables = Array.isArray(allTables)
+  ? allTables.filter((table) => table.status === 'free')
+  : [];
+
+  useEffect(() => {
+
+    fetchtables();
+  }, [])
+  const fetchtables = async () => {
+    const res = await getAllTables()
+    setAllTables(res.tables)
+    // console.log("tables is :",res);
+
+  }
+
 
 
   //////////add user details ///////////////
+
 
   const selectedItems = Object.values(cart);
   const totalAmount = selectedItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+  console.log("totalAmount is :", totalAmount);
+
 
 
   const [formData, setFormData] = useState({
-    userName: 'Subrata Roy',
-    phoneNo: '9876543210',
-    tableNo: 'A2',
-    items: selectedItems,
+    userName: '',
+    phoneNo: '',
+    tableNo: '',
     payment: 'Unpaid',
-    totalAmount
+
   });
+  // useEffect(() => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     items: selectedItems,
+  //     totalAmount: totalAmount,
+  //   }));
+  // }, [selectedItems, totalAmount]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,29 +115,46 @@ function CreateNewOrder() {
 
   const handleSubmit = async () => {
     console.log('Order Placed:', formData);
-    // const selectedItems = Object.values(cart);
-    // const totalAmount = selectedItems.reduce(
-    //   (acc, item) => acc + item.price * item.quantity,
-    //   0
-    // );
+    const finalOrder = {
+      ...formData,
+      items: selectedItems,
+      totalAmount,
+    };
+    console.log("the final order is :", finalOrder);
 
-    // const payload = {
-    //   userName: 'Subrata Roy',
-    //   phoneNo: '9876543210',
-    //   tableNo: 'A2',
-    //   items: selectedItems,
-    //   payment: "Unpaid",
-    //   totalAmount,
-    // };
 
-    // try {
-    //   await axios.post(`${url}/api/food/order/add`, formData);
-    //   alert('Order placed!');
-    //   setCart({});
-    // } catch (err) {
-    //   console.error(err);
-    //   alert('Error placing order');
-    // }
+    try {
+      await axios.post(`${url}/api/food/order/add`, finalOrder);
+      // console.log("table not by slected is :",finalOrder.tableNo.tableNumber);
+      // console.log("alltables  slected is :",allTables);
+
+
+
+      const selectedTable = allTables.find(
+        (table) => table.tableNumber === finalOrder?.tableNo.tableNumber
+      );
+      // console.log("selected table is is :",selectedTable);
+
+
+      // 3. Update table status to "reserved"
+      if (selectedTable) {
+        await axios.put(`${url}/api/table/updatetable/${selectedTable._id}`, {
+          status: 'reserved',
+        });
+      }
+
+      // 4. Refetch tables (or remove A1 from state)
+      fetchtables();
+
+
+
+
+      alert('Order placed!');
+      setCart({});
+    } catch (err) {
+      console.error(err);
+      alert('Error placing order');
+    }
 
     handleClose(); // Close modal after submission
   };
@@ -160,32 +207,6 @@ function CreateNewOrder() {
       }
     });
   };
-
-  // const placeOrder = async () => {
-  //   const selectedItems = Object.values(cart);
-  //   const totalAmount = selectedItems.reduce(
-  //     (acc, item) => acc + item.price * item.quantity,
-  //     0
-  //   );
-
-  //   const payload = {
-  //     userName: 'Subrata Roy',
-  //     phoneNo: '9876543210',
-  //     tableNo: 'A2',
-  //     items: selectedItems,
-  //     payment: "Unpaid",
-  //     totalAmount,
-  //   };
-
-  //   try {
-  //     await axios.post(`${url}/api/food/order/add`, payload);
-  //     alert('Order placed!');
-  //     setCart({});
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert('Error placing order');
-  //   }
-  // };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -726,9 +747,9 @@ function CreateNewOrder() {
             value={formData.tableNo}
             onChange={handleChange}
           >
-            {tableOptions.map((table) => (
+            {freeTables.map((table) => (
               <MenuItem key={table} value={table}>
-                {table}
+                {table.tableNumber}
               </MenuItem>
             ))}
           </TextField>
@@ -743,17 +764,8 @@ function CreateNewOrder() {
             onChange={handleChange}
           >
             <MenuItem value="Unpaid">Unpaid</MenuItem>
-            <MenuItem value="Paid">Paid</MenuItem>
-          </TextField>
 
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Total Amount"
-            name="totalAmount"
-            value={formData.totalAmount}
-            InputProps={{ readOnly: true }}
-          />
+          </TextField>
 
           <Button
             variant="contained"

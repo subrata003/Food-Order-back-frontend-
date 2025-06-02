@@ -38,15 +38,23 @@ import moment from "moment";
 import { useDispatch } from "react-redux";
 import { setOrder } from "../redux/slice/updateorderSlice";
 import { Outlet, useNavigate } from "react-router-dom";
+import { getAllTables } from "../apis/table/table";
 
 const OrderList = () => {
+  const url = "http://localhost:8080";
   const { orderList, fetchAllOrders } = useFood();
+
+  
   const [orders, setOrders] = useState([]);
+
+  
+  
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [historyFilter, setHistoryFilter] = useState("Today");
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState([])
+  const [allTables, setAllTables] = useState([])
   const rowsPerPage = 6;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,6 +70,17 @@ const OrderList = () => {
     );
     setOrders(sortedOrders);
   }, [orderList]);
+
+  useEffect(() => {
+
+    fetchtables();
+  }, [])
+  const fetchtables = async () => {
+    const res = await getAllTables()
+    setAllTables(res.tables)
+    // console.log("tables is :",res);
+
+  }
 
 
 
@@ -91,10 +110,31 @@ const OrderList = () => {
 
     try {
       const res = await orderUpdate(id, updatedValues)
+      console.log("update value is :",updatedValues);
+
+
+      // if (updatedValues.status === "Completed") {
+      //   const selectedTable = allTables.find(
+      //     (table) => table.tableNumber === updatedValues.tableNo
+      //   );
+
+      //   if (selectedTable) {
+      //     await axios.put(`${url}/api/table/updatetable/${selectedTable._id}`, {
+      //       status: "free",
+      //     });
+      //     console.log(`✅ Table ${updatedValues.tableNo} freed`);
+      //   }
+      // }
+
+
+
+
+
       if (res.success == true) {
         console.log("order updated");
         fetchAllOrders();
       }
+
 
     } catch (error) {
       console.log(error);
@@ -127,6 +167,13 @@ const OrderList = () => {
     const term = String(searchTerm || "").toLowerCase();
     return item.orderId?.toString().toLowerCase().includes(term);
   });
+
+  useEffect(() => {
+  console.log("filter order is:", filterOrder);
+}, []);
+
+  // console.log("filter order is :",filterOrder);
+  
 
   const updateOrderForUser = () => {
     console.log("update order for user");

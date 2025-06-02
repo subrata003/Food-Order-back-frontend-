@@ -62,7 +62,7 @@ export const FoodProvider = ({ children }) => {
     };
     const fetchAllOrders=async()=>{
       const data = await getAllOrder();
-      // console.log("orderdata is:",data.data);
+      // console.log("orderdata is si is :",data.data);
 
       if (data.success) {
         setOrderList(data.data);

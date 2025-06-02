@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import AddFood from "../components/AddFood";
 import ViewFoods from "../components/ViewFoods";
 import { useFood } from "../storeContext/ContextApi";
+import Addtable from "../components/Addtable";
 
 // Custom Tab Panel component
 function CustomTabPanel(props) {
@@ -47,7 +48,10 @@ export default function ManuManagement() {
   const tabs = [{ label: "View Manu", component: <ViewFoods /> }];
 
   if (userData.role === "admin" || userData.role === "manager") {
+    tabs.unshift({ label: "Add Table", component: <Addtable /> });
     tabs.unshift({ label: "Add Manu", component: <AddFood /> });
+
+    
   }
 
   const handleChange = async (event, newValue) => {
