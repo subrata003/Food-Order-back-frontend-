@@ -1,5 +1,6 @@
 import axios from "axios";
-const url = "http://localhost:8080";
+// const url ="https://food-order-backend-production-84ea.up.railway.app"
+const url ="http://localhost:8080";
 
 export const addTable = async (table) => {
  console.log("table is ",table);

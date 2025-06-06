@@ -39,9 +39,11 @@ import { useDispatch } from "react-redux";
 import { setOrder } from "../redux/slice/updateorderSlice";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getAllTables } from "../apis/table/table";
+import axios from "axios";
 
 const OrderList = () => {
-  const url = "http://localhost:8080";
+// const url ="https://food-order-backend-production-84ea.up.railway.app"
+const url ="http://localhost:8080";
   const { orderList, fetchAllOrders } = useFood();
 
   
@@ -59,9 +61,12 @@ const OrderList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
+ 
+  
 
   useEffect(() => {
     fetchAllOrders();
+    //  console.log("all tables is : ",allTables);
   }, [orderList]);
 
   useEffect(() => {
@@ -113,18 +118,18 @@ const OrderList = () => {
       console.log("update value is :",updatedValues);
 
 
-      // if (updatedValues.status === "Completed") {
-      //   const selectedTable = allTables.find(
-      //     (table) => table.tableNumber === updatedValues.tableNo
-      //   );
+      if (updatedValues.status === "Completed") {
+        const selectedTable = allTables.find(
+          (table) => table.tableNumber === updatedValues.tableNo
+        );
 
-      //   if (selectedTable) {
-      //     await axios.put(`${url}/api/table/updatetable/${selectedTable._id}`, {
-      //       status: "free",
-      //     });
-      //     console.log(`✅ Table ${updatedValues.tableNo} freed`);
-      //   }
-      // }
+        if (selectedTable) {
+          await axios.put(`${url}/api/table/updatetable/${selectedTable._id}`, {
+            status: "free",
+          });
+          console.log(`✅ Table ${updatedValues.tableNo} freed`);
+        }
+      }
 
 
 
