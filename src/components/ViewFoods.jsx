@@ -43,8 +43,8 @@ const label = { inputProps: { 'aria-label': 'Switch demo' } };
 // ];
 
 const View = () => {
-// const url ="https://food-order-backend-production-84ea.up.railway.app"
-const url ="http://localhost:8080";
+  const url = "https://food-order-backend-production-84ea.up.railway.app"
+  // const url ="http://localhost:8080";
   const { foodList, removeFood, fetchFoods, userData } = useFood();
   console.log("foodlist", foodList);
 
@@ -56,7 +56,7 @@ const url ="http://localhost:8080";
   const [foodId, setFoodId] = useState(null);
   const [delateItem, setDeleteItem] = useState([])
   const [checked, setChecked] = useState(false);
-  console.log("checked:",checked);
+  console.log("checked:", checked);
 
   const notify = (message) => {
     toast.success(`${message}`, {
@@ -69,7 +69,7 @@ const url ="http://localhost:8080";
       theme: "colored",
     });
   };
-  
+
   // Function to delete a food item
   const handleDelete = async (item) => {
     setFoodId(item._id)
@@ -91,28 +91,28 @@ const url ="http://localhost:8080";
   const filteredItems = foodList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const handleShow=async(e,item)=>{
+  const handleShow = async (e, item) => {
     // setChecked(e.target.checked)
-    const ischecekd=e.target.checked
-    const newStatus= !ischecekd? "hide" :"show"
+    const ischecekd = e.target.checked
+    const newStatus = !ischecekd ? "hide" : "show"
     const updatedItem = { ...item, status: newStatus };
-    console.log("updatedItem:",updatedItem);
+    console.log("updatedItem:", updatedItem);
 
     try {
-      const res=await updateFood(item._id,updatedItem)
-      if (res.success==true) {
+      const res = await updateFood(item._id, updatedItem)
+      if (res.success == true) {
         // console.log(res.message);
-        
+
         fetchFoods();
         notify(res.message);
-        
+
       }
-      
+
     } catch (error) {
-      
+
     }
-    
-    
+
+
 
   }
 
@@ -229,58 +229,96 @@ const url ="http://localhost:8080";
               filteredItems.map((item) => (
                 <Grid item xs={12} sm={6} md={4} key={item.id}>
                   <Card sx={{ p: 2, boxShadow: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <CardContent>
-                      {/* Display Image */}
-                      {item.image ? (
-                        <img
-                          src={`${url}/images/${item.image}`} // Image URL from API
-                          alt={item.name}  // Alt text for accessibility
-                          style={{
-                            width: '100%',         // Ensure the image takes up full width of the card
-                            height: '200px',       // Set a fixed height for the image
-                            objectFit: 'cover',    // Ensure the image scales correctly without stretching
-                            borderRadius: '8px',   // Optional: Adds rounded corners to the image
-                            marginBottom: '16px',  // Space between image and text
-                          }}
+                    {item.quantity > 0 ?
+                      <CardContent>
+                        {/* Display Image */}
+                        {item.image ? (
+                          <img
+                            src={`${url}/images/${item.image}`} // Image URL from API
+                            alt={item.name}  // Alt text for accessibility
+                            style={{
+                              width: '100%',         // Ensure the image takes up full width of the card
+                              height: '200px',       // Set a fixed height for the image
+                              objectFit: 'cover',    // Ensure the image scales correctly without stretching
+                              borderRadius: '8px',   // Optional: Adds rounded corners to the image
+                              marginBottom: '16px',  // Space between image and text
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mb: 2 }}>
+                            No Image Available
+                          </Typography>
+                        )}
+                        <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
+                          {item.name}
+                        </Typography>
+                        <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
+                            Price: ₹{item.price}
+                          </Typography>
+                          <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
+                            Quantity:{item.quantity}
+                          </Typography>
+                        </Typography>
+                      </CardContent> :
+                      <CardContent sx={{opacity: item.quantity <= 0 ? 0.5 : 1,}}>
+                        {/* Display Image */}
+                        {item.image ? (
+                          <img
+                            src={`${url}/images/${item.image}`} // Image URL from API
+                            alt={item.name}  // Alt text for accessibility
+                            style={{
+                              width: '100%',         // Ensure the image takes up full width of the card
+                              height: '200px',       // Set a fixed height for the image
+                              objectFit: 'cover',    // Ensure the image scales correctly without stretching
+                              borderRadius: '8px',   // Optional: Adds rounded corners to the image
+                              marginBottom: '16px',  // Space between image and text
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mb: 2 }}>
+                            No Image Available
+                          </Typography>
+                        )}
+                        <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
+                          {item.name}
+                        </Typography>
+                        <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
+                            Price: ₹{item.price}
+                          </Typography>
+                          <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
+                            Quantity:{item.quantity}
+                          </Typography>
+                        </Typography>
+                        
+                      </CardContent>
+
+                      
+
+
+                    }
+
+                    {userData.role == "admin" || userData.role == "manager" ?
+                      <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
+
+                        <Switch
+                          {...label}
+                          defaultChecked={item.status === "show"}
+                          onChange={(e) => handleShow(e, item)}
+
                         />
-                      ) : (
-                        <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mb: 2 }}>
-                          No Image Available
-                        </Typography>
-                      )}
-                      <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
-                        {item.name}
-                      </Typography>
-                      <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
-                          Price: ₹{item.price}
-                        </Typography>
-                        <Typography variant="h6" color="secondary" sx={{ mb: 2 }}>
-                          Quantity:{item.quantity}
-                        </Typography>
-                      </Typography>
-                    </CardContent>
 
-                    {userData.role == "admin" || userData.role == "manager" ? 
-                    <CardActions sx={{display:"flex", justifyContent:"space-between"}}>
-
-                      <Switch
-                       {...label} 
-                       defaultChecked={item.status === "show"} 
-                       onChange={(e)=>handleShow(e,item)}  
-
-                       />
-
-                      <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<DeleteIcon />}
-                        sx={{ width: '40%' }}
-                        onClick={() => handleDelete(item)}
-                      >
-                        Delete
-                      </Button>
-                    </CardActions> : " "}
+                        <Button
+                          variant="contained"
+                          color="error"
+                          startIcon={<DeleteIcon />}
+                          sx={{ width: '40%' }}
+                          onClick={() => handleDelete(item)}
+                        >
+                          Delete
+                        </Button>
+                      </CardActions> : " "}
                   </Card>
                 </Grid>
 

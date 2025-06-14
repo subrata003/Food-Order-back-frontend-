@@ -17,9 +17,9 @@ import { addNotification, removeAllNotifications, removeNotification } from "../
 
 function Notification() {
 
- // const socketUrl = "https://food-order-backend-production-84ea.up.railway.app";
+ const socketUrl = "https://food-order-backend-production-84ea.up.railway.app";
  
-  const socketUrl ="http://localhost:8080";
+  // const socketUrl ="http://localhost:8080";
 
 
  const dispatch = useDispatch();

@@ -19,7 +19,9 @@ import { compareDesc, isSameDay, isSameWeek, isSameMonth } from "date-fns";
 import moment from "moment";
 import Pai from "../components/Pai";
 import { useFood } from "../storeContext/ContextApi";
-
+import TableBarIcon from '@mui/icons-material/TableBar';
+import dayjs from 'dayjs';
+import { getAllTables } from "../apis/table/table";
 const Dashboard = () => {
   const { orderList } = useFood();
   const navigate = useNavigate();
@@ -28,12 +30,56 @@ const Dashboard = () => {
   const [historyFilter, setHistoryFilter] = useState("Today");
   const [orders, setOrders] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [getTables, setGetTables] = useState([])
+
+  // console.log("total orders list is :", orderList);
+
+  const totalListPrice = orderList.filter((item) => item.status === "Completed").reduce((acc, item) => {
+    return acc + Number(item.totalAmount);
+  }, 0);
+  useEffect(() => {
+    fetchTables();
+  }, [])
+
+  const fetchTables = async () => {
+    const res = await getAllTables();
+    console.log("all tables is :", res.tables);
+    setGetTables(res.tables)
+
+  }
+
+  // console.log("deliverd order price is :", totalListPrice);
+
+
 
   const revenueData = {
-    today: 3500,
-    week: 12000,
-    month: 25000,
+    today: 0,
+    week: 0,
+    month: 0,
   };
+  const now = dayjs();
+
+  orderList
+    .filter((item) => item.status === "Completed")
+    .forEach((item) => {
+      const createdAt = dayjs(item.createdAt);
+      const amount = Number(item.totalAmount || 0);
+
+      // Today
+      if (createdAt.isSame(now, 'day')) {
+        revenueData.today += amount;
+      }
+
+      // This week
+      if (createdAt.isSame(now, 'week')) {
+        revenueData.week += amount;
+      }
+
+      // This month
+      if (createdAt.isSame(now, 'month')) {
+        revenueData.month += amount;
+      }
+    });
 
   const filterLabels = {
     today: "Today",
@@ -85,7 +131,7 @@ const Dashboard = () => {
         <Grid item xs={12} md={3}>
           <Card sx={{ p: 2 }}>
             <Typography variant="subtitle1">Total Revenue</Typography>
-            <Typography variant="h6" color="green">₹ 1,25,000</Typography>
+            <Typography variant="h6" color="green">{totalListPrice}</Typography>
           </Card>
         </Grid>
 
@@ -120,15 +166,46 @@ const Dashboard = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}>
           <Card sx={{ p: 2 }}>
             <Typography variant="subtitle1">Profit</Typography>
             <Typography variant="h6" color="secondary">₹ 15,000</Typography>
           </Card>
-        </Grid>
+        </Grid> */}
 
         {/* Order History */}
         <Grid item xs={12} md={6}>
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6" mb={2}>Tables</Typography>
+            <Grid container spacing={2}>
+              {getTables.map((table) => {
+                const isFree = table.status === 'free';
+                return (
+                  <Grid item xs={6} sm={4} md={3} key={table._id}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: isFree ? '#e0f7e9' : '#fdecea',
+                        color: isFree ? 'green' : 'red',
+                        border: `2px solid ${isFree ? 'green' : 'red'}`,
+                        transition: '0.3s',
+                      }}
+                    >
+                      <TableBarIcon fontSize="large" />
+                      <Typography variant="subtitle1">{table.tableNumber}</Typography>
+                      <Typography variant="caption" sx={{ mt: 1 }}>
+                        {isFree ? 'Free' : 'Reserved'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" fontWeight={600} mb={2}>
               Order History ({historyFilter})
@@ -172,9 +249,9 @@ const Dashboard = () => {
                         variant="outlined"
                         color={
                           order.status === "Completed" ? "success" :
-                          order.status === "Pending" ? "warning" :
-                          order.status === "Processing" ? "info" :
-                          order.status === "canceled" ? "error" : "default"
+                            order.status === "Pending" ? "warning" :
+                              order.status === "Processing" ? "info" :
+                                order.status === "canceled" ? "error" : "default"
                         }
                         sx={{ ml: 1 }}
                       />
@@ -186,7 +263,10 @@ const Dashboard = () => {
                 </Card>
               ))}
             </Box>
+
           </Paper>
+
+
         </Grid>
 
         {/* Chart or Stats Panel */}

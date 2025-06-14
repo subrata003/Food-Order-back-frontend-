@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getAuthHeaders } from "../user/user";
 
-// const url ="https://food-order-backend-production-84ea.up.railway.app"
-const url ="http://localhost:8080";
+const url ="https://food-order-backend-production-84ea.up.railway.app"
+// const url ="http://localhost:8080";
 
 export const addFood = async (food) => {
 

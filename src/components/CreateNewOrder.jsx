@@ -40,8 +40,8 @@ const style = {
 
 
 function CreateNewOrder() {
-// const url ="https://food-order-backend-production-84ea.up.railway.app"
-const url ="http://localhost:8080";
+  const url ="https://food-order-backend-production-84ea.up.railway.app"
+  // const url = "http://localhost:8080";
   const { fetchAllOrders } = useFood();
   const navigate = useNavigate();
   const [foods, setFoods] = useState([]);
@@ -63,8 +63,8 @@ const url ="http://localhost:8080";
   //tables
 
   const freeTables = Array.isArray(allTables)
-  ? allTables.filter((table) => table.status === 'free')
-  : [];
+    ? allTables.filter((table) => table.status === 'free')
+    : [];
 
   useEffect(() => {
 
@@ -385,182 +385,109 @@ const url ="http://localhost:8080";
         </Box>
         <Divider />
         <Typography sx={{ margin: "20px 0 20px 20px" }}>{singleHeader ? `${singleHeader}` : `All`}</Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent="center" sx={{ marginBottom: '70px' }}>
           {showHeaderFoods.filter((e) => e.status === 'show').length > 0 ? (
             showHeaderFoods
               .filter((e) => e.status === 'show')
-              .map((item) => {
+              .map((item) =>{
                 const selectedQty = cart[item._id]?.quantity || 0;
+                const availableStock = item.quantity - selectedQty;
+
                 return (
-                  <Grid item xs={12} sm={6} md={3} key={item._id}>
-                    {!item.quantity - selectedQty <= 0 ?
-                      <Card sx={{ p: 2, boxShadow: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: "18vw" }}>
-                        <CardContent sx={{ width: "100%" }}>
-                          {item.image ? (
-                            <img
-                              src={`${url}/images/${item.image}`}
-                              alt={item.name}
-                              style={{
-                                width: '100%',
-                                height: '150px',
-                                objectFit: 'cover',
-                                borderRadius: '8px',
-                                marginBottom: '16px',
-                              }}
-                            />
-                          ) : (
-                            <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mb: 2 }}>
-                              No Image Available
-                            </Typography>
-                          )}
-
-                          <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
-                            {item.name}
-                          </Typography>
-
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                            <Box>
-                              <Typography variant="h6" color="secondary">Price: ₹{item.price}</Typography>
-                              <Typography variant="h6" color="secondary">Stock: {item.quantity - selectedQty}</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <AddIcon
-                                sx={{ color: 'white', background: 'green', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
-                                onClick={() => handleAdd(item)}
-                              />
-                              <Typography variant="h6" color="textPrimary">{selectedQty}</Typography>
-                              <RemoveOutlinedIcon
-                                sx={{ color: 'white', background: 'red', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
-                                onClick={() => handleRemove(item)}
-                              />
-                            </Box>
-                          </Box>
-                        </CardContent>
-
-                      </Card> :
-                      <Card
-                        sx={{
-                          p: 2,
-                          boxShadow: 3,
-                          borderRadius: 2,
-                          opacity: item.quantity - selectedQty <= 0 ? 0.5 : 1,
-                          pointerEvents: item.quantity - selectedQty <= 0 ? 'none' : 'auto',
-                          position: 'relative',
-                          width: "18vw"
-                        }}
-                      >
-                        <CardContent sx={{ width: "100%" }}>
-                          {item.image ? (
-                            <img
-                              src={`${url}/images/${item.image}`}
-                              alt={item.name}
-                              style={{
-                                width: '100%',
-                                height: '150px',
-                                objectFit: 'cover',
-                                borderRadius: '8px',
-                                marginBottom: '16px',
-                              }}
-                            />
-                          ) : (
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              sx={{ textAlign: 'center', mb: 2 }}
-                            >
-                              No Image Available
-                            </Typography>
-                          )}
-
-                          <Typography
-                            variant="h6"
-                            fontWeight="bold"
-                            color="primary"
-                            sx={{ mb: 1 }}
-                          >
-                            {item.name}
-                          </Typography>
-
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              mb: 2,
-                            }}
-                          >
-                            <Box>
-                              <Typography variant="h6" color="secondary">
-                                Price: ₹{item.price}
-                              </Typography>
-                              <Typography variant="h6" color="secondary">
-                                Stock: {item.quantity - selectedQty}
-                              </Typography>
-
-                            </Box>
-
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                              }}
-                            >
-                              <AddIcon
-                                sx={{
-                                  color: 'white',
-                                  background:
-                                    item.quantity - selectedQty <= 0 ? 'gray' : 'green',
-                                  borderRadius: '50%',
-                                  padding: '4px',
-                                  cursor:
-                                    item.quantity - selectedQty <= 0 ? 'not-allowed' : 'pointer',
-                                }}
-                                onClick={() => {
-                                  if (item.quantity - selectedQty > 0) handleAdd(item);
-                                }}
-                              />
-                              <Typography variant="h6" color="textPrimary">
-                                {selectedQty}
-                              </Typography>
-                              <RemoveOutlinedIcon
-                                sx={{
-                                  color: 'white',
-                                  background: 'red',
-                                  borderRadius: '50%',
-                                  padding: '4px',
-                                  cursor: 'pointer',
-                                }}
-                                onClick={() => handleRemove(item)}
-                              />
-                            </Box>
-                          </Box>
-                        </CardContent>
-
-                        {/* Optional overlay */}
-                        {item.quantity - selectedQty <= 0 && (
-                          <Box
-                            sx={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
+                  <Grid item key={item._id}>
+                    <Card
+                      sx={{
+                        width: '300px',
+                        height: '280px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        borderRadius: 2,
+                        boxShadow: 3,
+                        position: 'relative',
+                        opacity: availableStock <= 0 ? 0.5 : 1,
+                        pointerEvents: availableStock <= 0 ? 'none' : 'auto',
+                      }}
+                    >
+                      <CardContent sx={{ flex: 1 }}>
+                        {item.image ? (
+                          <img
+                            src={`${url}/images/${item.image}`}
+                            alt={item.name}
+                            style={{
                               width: '100%',
-                              height: '100%',
-                              bgcolor: 'rgba(255,255,255,0.6)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '1.2rem',
-                              color: 'red',
-                              fontWeight: 'bold',
-                              borderRadius: 2,
+                              height: '150px',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                              marginBottom: '16px',
                             }}
-                          >
-                            Out of Stock
-                          </Box>
+                          />
+                        ) : (
+                          <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', mb: 2 }}>
+                            No Image Available
+                          </Typography>
                         )}
-                      </Card>
-                    }
+
+                        <Typography variant="h6" fontWeight="bold" color="primary" sx={{ mb: 1 }}>
+                          {item.name}
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                          <Box>
+                            <Typography variant="body2" color="secondary">Price: ₹{item.price}</Typography>
+                            <Typography variant="body2" color="secondary">Stock: {availableStock}</Typography>
+                          </Box>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <AddIcon
+                              sx={{
+                                color: 'white',
+                                background: availableStock <= 0 ? 'gray' : 'green',
+                                borderRadius: '50%',
+                                padding: '4px',
+                                cursor: availableStock <= 0 ? 'not-allowed' : 'pointer',
+                              }}
+                              onClick={() => {
+                                if (availableStock > 0) handleAdd(item);
+                              }}
+                            />
+                            <Typography variant="body2" color="textPrimary">{selectedQty}</Typography>
+                            <RemoveOutlinedIcon
+                              sx={{
+                                color: 'white',
+                                background: 'red',
+                                borderRadius: '50%',
+                                padding: '4px',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => handleRemove(item)}
+                            />
+                          </Box>
+                        </Box>
+                      </CardContent>
+
+                      {availableStock <= 0 && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            bgcolor: 'rgba(255,255,255,0.6)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.2rem',
+                            color: 'red',
+                            fontWeight: 'bold',
+                            borderRadius: 2,
+                          }}
+                        >
+                          Out of Stock
+                        </Box>
+                      )}
+                    </Card>
                   </Grid>
                 );
               })
@@ -569,6 +496,7 @@ const url ="http://localhost:8080";
               No food items found.
             </Typography>
           )}
+
         </Grid>
         {/* CART PREVIEW */}
 

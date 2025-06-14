@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url ="https://food-order-backend-production-84ea.up.railway.app"
-const url ="http://localhost:8080";
+const url ="https://food-order-backend-production-84ea.up.railway.app"
+// const url ="http://localhost:8080";
 
 // Function to get token from localStorage and set headers
 export const getAuthHeaders = () => {
