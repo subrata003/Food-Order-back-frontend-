@@ -65,9 +65,11 @@ const Addtable = ({ onSubmit }) => {
       <Button
         fullWidth
         variant="contained"
-        color="primary"
-        sx={{ mt: 2 }}
+        // color="primary"
+        
+        sx={{ mt: 2,background:"#da1142" }}
         onClick={handleSubmit}
+        
       >
         Submit
       </Button>
