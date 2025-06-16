@@ -40,7 +40,7 @@ const style = {
 
 
 function CreateNewOrder() {
-  const url ="https://food-order-backend-production-84ea.up.railway.app"
+  const url = "https://food-order-backend-production-84ea.up.railway.app"
   // const url = "http://localhost:8080";
   const { fetchAllOrders } = useFood();
   const navigate = useNavigate();
@@ -222,6 +222,9 @@ function CreateNewOrder() {
 
 
   }
+  const filterItemAll = () => {
+    setSingleHeader('');
+  }
 
   const showHeaderFoods = singleHeader ? foods.filter((item) => item.category === singleHeader) : foods;
 
@@ -318,9 +321,7 @@ function CreateNewOrder() {
   return (
     <>
       <Box >
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, cursor: 'pointer' }} onClick={cancelOrder}>
-          <ShoppingCartOutlinedIcon sx={{ fontSize: 40 }} onClick={openCart} />
-        </Box>
+
         <Box
           sx={{
             display: 'flex',
@@ -334,6 +335,54 @@ function CreateNewOrder() {
             marginBottom: '20px',
           }}
         >
+          <Box
+            
+            sx={{
+              flex: '0 0 auto',
+              minWidth: '160px', // creates consistent spacing between items
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease',
+              mr: 2, // right margin between cards
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
+            }}
+          onClick={() => filterItemAll()}
+          >
+
+            <Box
+              sx={{
+                width: '130px',
+                height: '130px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '2px solid #ddd',
+                mx: 'auto',
+                mb: 1,
+                backgroundColor: '#fff',
+              }}
+            >
+              <img
+                  src="https://c.ndtvimg.com/k03tb2a_healthy-food_625x300_17_August_18.jpg"
+                  alt="no img"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+            </Box>
+            <Typography
+                variant="body2"
+                fontWeight="500"
+                color="textPrimary"
+                noWrap
+              >
+                All
+              </Typography>
+            </Box>
+
           {OrderList.map((item, index) => (
             <Box
               key={index}
@@ -350,6 +399,7 @@ function CreateNewOrder() {
               }}
               onClick={() => filterItem(item)}
             >
+
               <Box
                 sx={{
                   width: '130px',
@@ -389,7 +439,7 @@ function CreateNewOrder() {
           {showHeaderFoods.filter((e) => e.status === 'show').length > 0 ? (
             showHeaderFoods
               .filter((e) => e.status === 'show')
-              .map((item) =>{
+              .map((item) => {
                 const selectedQty = cart[item._id]?.quantity || 0;
                 const availableStock = item.quantity - selectedQty;
 

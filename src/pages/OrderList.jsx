@@ -118,7 +118,7 @@ const url ="https://food-order-backend-production-84ea.up.railway.app"
       console.log("update value is :",updatedValues);
 
 
-      if (updatedValues.status === "Completed" || "canceled") {
+      if (updatedValues.status === "Completed" || updatedValues.status === "canceled") {
         const selectedTable = allTables.find(
           (table) => table.tableNumber === updatedValues.tableNo
         );
