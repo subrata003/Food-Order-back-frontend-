@@ -42,8 +42,8 @@ import { getAllTables } from "../apis/table/table";
 import axios from "axios";
 
 const OrderList = () => {
-const url ="https://food-order-backend-production-84ea.up.railway.app"
-// const url ="http://localhost:8080";
+// const url ="https://food-order-backend-production-84ea.up.railway.app"
+const url ="http://localhost:8080";
   const { orderList, fetchAllOrders } = useFood();
 
   

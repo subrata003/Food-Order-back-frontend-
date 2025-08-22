@@ -43,8 +43,8 @@ const label = { inputProps: { 'aria-label': 'Switch demo' } };
 // ];
 
 const View = () => {
-  const url = "https://food-order-backend-production-84ea.up.railway.app"
-  // const url ="http://localhost:8080";
+  // const url = "https://food-order-backend-production-84ea.up.railway.app"
+  const url ="http://localhost:8080";
   const { foodList, removeFood, fetchFoods, userData } = useFood();
   console.log("foodlist", foodList);
 
