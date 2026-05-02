@@ -244,7 +244,7 @@ const url ="http://localhost:8080";
             <Table>
               <TableHead>
                 <TableRow sx={{ bgcolor: "#da1142" }}>
-                  {['OrderId', 'User', 'Phone', 'Items', 'Total (₹)', 'Payment', 'Status', 'Date', 'Action'].map((head) => (
+                  {['OrderId', 'User', 'Phone', 'Items','Table', 'Total (₹)', 'Payment', 'Status', 'Date', 'Action'].map((head) => (
                     <TableCell key={head} sx={{ color: "white", fontWeight: "bold" }}>
                       {head}
                     </TableCell>
@@ -260,6 +260,7 @@ const url ="http://localhost:8080";
                     <TableCell>
                       {order.items.map((item) => `${item.name}${item.quantity > 1 ? ` x${item.quantity}` : ""}`).join(", ")}
                     </TableCell>
+                    <TableCell>{order.tableNo}</TableCell>
                     <TableCell>₹{order.totalAmount}</TableCell>
                     <TableCell>
                       <Chip

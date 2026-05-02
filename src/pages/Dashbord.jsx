@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [getTables, setGetTables] = useState([])
 
   // console.log("total orders list is :", orderList);
+  // const { orderList, fetchAllOrders } = useFood();
 
   const totalListPrice = orderList.filter((item) => item.status === "Completed").reduce((acc, item) => {
     return acc + Number(item.totalAmount);
@@ -115,6 +116,19 @@ const Dashboard = () => {
     return true;
   });
 
+  const handleTableClick = (table) => {
+    // const res=filteredOrders.find((order)=>order.id===id)
+    console.log("table clicked", orders);
+    const data=orders.find((order) => order.tableNo === table.tableNumber && table.status ==="reserved" );
+    if(data){
+      console.log("data",data);
+    }
+    else{
+      console.log("free table");
+    }
+
+}
+
   return (
     <Box sx={{ p: 4 }}>
       {/* Header */}
@@ -181,7 +195,7 @@ const Dashboard = () => {
               {getTables.map((table) => {
                 const isFree = table.status === 'free';
                 return (
-                  <Grid item xs={6} sm={4} md={3} key={table._id}>
+                  <Grid item xs={6} sm={4} md={3} key={table._id} >
                     <Box
                       sx={{
                         display: 'flex',
@@ -194,6 +208,7 @@ const Dashboard = () => {
                         border: `2px solid ${isFree ? 'green' : 'red'}`,
                         transition: '0.3s',
                       }}
+                      onClick={() => handleTableClick(table)}
                     >
                       <TableBarIcon fontSize="large" />
                       <Typography variant="subtitle1">{table.tableNumber}</Typography>

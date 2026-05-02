@@ -70,11 +70,6 @@ export const FoodProvider = ({ children }) => {
         console.log("Failed to fetch orders:", data.message);
       }
     }
-
- 
-
-  
-
   return (
     <FoodContext.Provider value={{ foodList, removeFood,fetchFoods, loading,userData,fetchProfile ,orderList,fetchAllOrders}}>
       {children}

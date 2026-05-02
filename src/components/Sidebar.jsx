@@ -20,8 +20,8 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { useNavigate } from "react-router-dom";
-import SidebarRoutes from "../routes/SidebarRoutes";
+import { Outlet, useNavigate } from "react-router-dom";
+// import SidebarRoutes from "../routes/SidebarRoutes";
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -175,7 +175,7 @@ export default function Sidebar() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: "85vw" ,justifyContent:"center"}} margin={3}>
         <DrawerHeader />
-        <SidebarRoutes /> {/* ✅ Renders nested routes correctly */}
+        <Outlet/> {/* ✅ Renders nested routes correctly */}
       </Box>
       {/* {openModal && <Profile/>} */}
     </Box>
