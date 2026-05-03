@@ -10,6 +10,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Modal,
   Paper,
   Typography,
 } from "@mui/material";
@@ -22,15 +23,22 @@ import { useFood } from "../storeContext/ContextApi";
 import TableBarIcon from '@mui/icons-material/TableBar';
 import dayjs from 'dayjs';
 import { getAllTables } from "../apis/table/table";
+
+
 const Dashboard = () => {
   const { orderList } = useFood();
   const navigate = useNavigate();
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const [filterType, setFilterType] = useState("month");
   const [historyFilter, setHistoryFilter] = useState("Today");
   const [orders, setOrders] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [getTables, setGetTables] = useState([])
+  const [selectedTable, setSelectedTable] = useState({})
 
   // console.log("total orders list is :", orderList);
   // const { orderList, fetchAllOrders } = useFood();
@@ -118,16 +126,18 @@ const Dashboard = () => {
 
   const handleTableClick = (table) => {
     // const res=filteredOrders.find((order)=>order.id===id)
-    console.log("table clicked", orders);
-    const data=orders.find((order) => order.tableNo === table.tableNumber && table.status ==="reserved" );
-    if(data){
-      console.log("data",data);
+    // console.log("table clicked", orders);
+    const data = orders.find((order) => order.tableNo === table.tableNumber && table.status === "reserved");
+    if (data) {
+      console.log("data", data);
+      setSelectedTable(data)
+      handleOpen();
     }
-    else{
+    else {
       console.log("free table");
     }
 
-}
+  }
 
   return (
     <Box sx={{ p: 4 }}>
@@ -283,6 +293,86 @@ const Dashboard = () => {
 
 
         </Grid>
+
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 350,
+              borderRadius: 3,
+              p: 3,
+              boxShadow: 4,
+              bgcolor: "background.paper",
+
+            }}
+          >
+            {/* Header */}
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, bgcolor: "yellow" }}>
+              Order #{selectedTable?.orderId}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, padding :"2px 0px" ,color:"red"}}>
+              {new Date(selectedTable?.createdAt).toLocaleString()}
+            </Typography>
+
+            <Typography variant="body2" sx={{ color: "gray", mb: 2 }}>
+              Table: {selectedTable?.tableNo}
+            </Typography>
+
+            {/* Divider */}
+            <Box sx={{ borderBottom: "1px dashed #ccc", mb: 2 }} />
+
+            {/* Items */}
+            {selectedTable?.items?.length > 0 ? (
+              selectedTable.items.map((e, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography>{e.name}</Typography>
+                  <Typography>x{e.quantity}</Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography sx={{ color: "gray" }}>Table free</Typography>
+            )}
+
+            {/* Divider */}
+            <Box sx={{ borderBottom: "1px dashed #ccc", my: 2 }} />
+
+            {/* Total */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+              <Typography sx={{ fontWeight: "bold" }}>Total</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>
+                ₹{selectedTable?.totalAmount}
+              </Typography>
+            </Box>
+
+            {/* Button */}
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Generate Bill
+            </Button>
+          </Box>
+        </Modal>
 
         {/* Chart or Stats Panel */}
         <Grid item xs={12} md={6}>
